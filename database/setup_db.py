@@ -224,8 +224,13 @@ def _ensure_default_admin(cursor):
     )
 
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from models.db import DB_PATH
+
 def initialize_database():
-    connection = sqlite3.connect('tobacco_management.db')
+    connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
 
     # Read schema from file
