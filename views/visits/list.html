@@ -1,0 +1,77 @@
+{% extends "_layout.html" %}
+{% block title %}Visits · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Officer visits</h1>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{{ url_for('officer_visits.performance') }}">Performance</a>
+      <a class="btn btn-primary" href="{{ url_for('officer_visits.create_visit') }}">New visit</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 140px">Date</th>
+            <th>Officer</th>
+            <th>Farmer</th>
+            <th style="width: 120px">Contract</th>
+            <th>Purpose</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in visits %}
+            <tr>
+              <td>{{ v["visit_date"] }}</td>
+              <td>
+                {{ v["officer_name"] or "—" }}
+                {% if v["officer_region"] %}<span class="text-muted">({{ v["officer_region"] }})</span>{% endif %}
+              </td>
+              <td>
+                {% if v["farmer_id"] %}
+                  <a class="link-underline link-underline-opacity-0" href="{{ url_for('farmers.farmer_detail', farmer_id=v['farmer_id']) }}">
+                    {{ v["farmer_name"] }}
+                  </a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td>
+                {% if v["contract_id"] %}
+                  <a class="link-underline link-underline-opacity-0" href="{{ url_for('contracts.contract_detail', contract_id=v['contract_id']) }}">
+                    #{{ v["contract_id"] }}
+                  </a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td class="text-truncate" style="max-width: 420px">{{ v["purpose"] or "" }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('officer_visits.edit_visit', visit_id=v['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('officer_visits.delete_visit', visit_id=v['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this visit?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No visits recorded yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

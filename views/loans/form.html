@@ -1,0 +1,55 @@
+{% extends "_layout.html" %}
+{% block title %}New loan · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">New loan / advance</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('loans.list_loans') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Farmer</label>
+          <select class="form-select" name="farmer_id" required>
+            <option value="" disabled selected>Select farmer…</option>
+            {% for f in farmers %}
+              <option value="{{ f['id'] }}">{{ f['name'] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Contract (optional)</label>
+          <select class="form-select" name="contract_id">
+            <option value="" selected>—</option>
+            {% for c in contracts %}
+              <option value="{{ c['id'] }}">#{{ c['id'] }} · {{ c['farmer_name'] or '—' }} ({{ c['status'] }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Loan date</label>
+          <input class="form-control" type="date" name="loan_date" value="{{ loan['loan_date'] if loan and loan.get('loan_date') else '' }}" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Principal</label>
+          <input class="form-control" name="principal" inputmode="decimal" required placeholder="e.g. 500.00" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="3" placeholder="Reason / terms (optional)"></textarea>
+        </div>
+
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Create loan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

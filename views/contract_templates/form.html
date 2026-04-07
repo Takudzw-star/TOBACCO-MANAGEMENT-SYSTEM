@@ -1,0 +1,34 @@
+{% extends "_layout.html" %}
+{% if template and template.get('id') %}
+  {% set page_title = "Edit template" %}
+{% else %}
+  {% set page_title = "New template" %}
+{% endif %}
+{% block title %}{{ page_title }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ page_title }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('contract_templates.list_templates') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" name="name" required value="{{ template['name'] if template else '' }}" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Body</label>
+          <textarea class="form-control font-monospace" name="body" rows="18" required>{{ template['body'] if template else '' }}</textarea>
+          <div class="form-text">
+            Placeholders: <code>{contract_id}</code>, <code>{farmer_name}</code>, <code>{field_officer_name}</code>, <code>{contract_date}</code>, <code>{end_date}</code>, <code>{details}</code>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,198 @@
+{% extends "_layout.html" %}
+{% block title %}Finance dashboard · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Finance dashboard</h1>
+      <div class="text-muted small">Paid / pending / overdue, advances & repayments, and summaries.</div>
+    </div>
+    <div class="d-flex gap-2">
+      {% include "_back_to_menu.html" %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('transactions.list_transactions') }}">Accounts</a>
+    </div>
+  </div>
+
+  <form method="get" class="card mb-3">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-sm-6 col-md-3">
+          <label class="form-label mb-1">Overdue if no payment in (days)</label>
+          <input class="form-control" name="overdue_days" inputmode="numeric" value="{{ kpis.overdue_days }}" />
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-primary" type="submit">Apply</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Total paid</div>
+          <div class="fs-4 fw-semibold">{{ "%.2f"|format(kpis.total_paid or 0) }}</div>
+          <div class="text-muted small">Payments to farmers</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Total advances</div>
+          <div class="fs-4 fw-semibold">{{ "%.2f"|format(kpis.total_advances or 0) }}</div>
+          <div class="text-muted small">Loan/advance disbursements</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Total repayments</div>
+          <div class="fs-4 fw-semibold">{{ "%.2f"|format(kpis.total_repayments or 0) }}</div>
+          <div class="text-muted small">Money received back</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Net cash position</div>
+          {% set net = kpis.net_cash_position or 0 %}
+          <div class="fs-4 fw-semibold {% if net < 0 %}text-danger{% elif net > 0 %}text-success{% endif %}">
+            {{ "%.2f"|format(net) }}
+          </div>
+          <div class="text-muted small">Repayments − (paid + advances)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Payment status</h2>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge text-bg-secondary">Pending: {{ kpis.pending_payments }}</span>
+            <span class="badge text-bg-danger">Overdue: {{ kpis.overdue_payments }}</span>
+          </div>
+          <div class="text-muted small mt-2">
+            Pending = active contracts with 0 payment transactions. Overdue = last payment older than {{ kpis.overdue_days }} days (or never).
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Loans exposure</h2>
+          <div class="row g-2">
+            <div class="col-4">
+              <div class="text-muted small">Principal</div>
+              <div class="fw-semibold">{{ "%.2f"|format(kpis.loan_principal or 0) }}</div>
+            </div>
+            <div class="col-4">
+              <div class="text-muted small">Repaid</div>
+              <div class="fw-semibold">{{ "%.2f"|format(kpis.loan_repaid or 0) }}</div>
+            </div>
+            <div class="col-4">
+              <div class="text-muted small">Balance</div>
+              <div class="fw-semibold">{{ "%.2f"|format(kpis.loan_balance or 0) }}</div>
+            </div>
+          </div>
+          <div class="text-muted small mt-2">
+            This uses the dedicated Loans module (not transaction-type advances).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-3">By region</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>Region</th>
+                  <th class="text-end">Paid</th>
+                  <th class="text-end">Advances</th>
+                  <th class="text-end">Repayments</th>
+                  <th class="text-end">Inputs cost</th>
+                  <th class="text-end">Net</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in by_region %}
+                  <tr>
+                    <td class="fw-semibold">{{ r["region"] }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["paid"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["advances"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["repayments"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["inputs_cost"] or 0) }}</td>
+                    <td class="text-end {% if (r['net'] or 0) < 0 %}text-danger{% elif (r['net'] or 0) > 0 %}text-success{% endif %}">
+                      {{ "%.2f"|format(r["net"] or 0) }}
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="6" class="text-muted">No data.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="text-muted small mt-2">
+            Net = repayments − (paid + advances). This is a cash-flow view (not “profit”).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Top farmers (net cash position)</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>Farmer</th>
+                  <th class="text-end">Paid</th>
+                  <th class="text-end">Advances</th>
+                  <th class="text-end">Repayments</th>
+                  <th class="text-end">Inputs cost</th>
+                  <th class="text-end">Net</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in by_farmer %}
+                  <tr>
+                    <td class="fw-semibold">{{ r["farmer_name"] }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["paid"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["advances"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["repayments"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["inputs_cost"] or 0) }}</td>
+                    <td class="text-end {% if (r['net'] or 0) < 0 %}text-danger{% elif (r['net'] or 0) > 0 %}text-success{% endif %}">
+                      {{ "%.2f"|format(r["net"] or 0) }}
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="6" class="text-muted">No data.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

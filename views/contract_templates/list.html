@@ -1,0 +1,55 @@
+{% extends "_layout.html" %}
+{% block title %}Contract templates · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Contract templates</h1>
+    <a class="btn btn-primary" href="{{ url_for('contract_templates.create_template') }}">New template</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Name</th>
+            <th style="width: 200px">Created</th>
+            <th style="width: 220px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in templates %}
+            <tr>
+              <td>{{ t["id"] }}</td>
+              <td class="fw-semibold">{{ t["name"] }}</td>
+              <td class="text-muted">{{ t["created_at"] }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_templates.edit_template', template_id=t['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('contract_templates.delete_template', template_id=t['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this template?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">No templates yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="text-muted small mt-3">
+    Placeholders you can use: <code>{contract_id}</code>, <code>{farmer_name}</code>, <code>{field_officer_name}</code>, <code>{contract_date}</code>, <code>{end_date}</code>, <code>{details}</code>
+  </div>
+{% endblock %}
+

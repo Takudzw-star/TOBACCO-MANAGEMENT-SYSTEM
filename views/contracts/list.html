@@ -1,0 +1,69 @@
+{% extends "_layout.html" %}
+{% block title %}Contracts · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Contracts</h1>
+    <a class="btn btn-primary" href="{{ url_for('contracts.create_contract') }}">New Contract</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Farmer</th>
+            <th>Field Officer</th>
+            <th style="width: 140px">Date</th>
+            <th>Details</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in contracts %}
+            <tr>
+              <td>{{ c["id"] }}</td>
+              <td>
+                <a class="link-underline link-underline-opacity-0" href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}">
+                  {{ c["farmer_name"] or "—" }}
+                </a>
+              </td>
+              <td>
+                {{ c["field_officer_name"] or "—" }}
+                {% if c["field_officer_region"] %}<span class="text-muted">({{ c["field_officer_region"] }})</span>{% endif %}
+              </td>
+              <td>{{ c["contract_date"] or "" }}</td>
+              <td class="text-truncate" style="max-width: 420px">{{ c["details"] or "" }}</td>
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-primary"
+                  href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}"
+                  >View</a
+                >
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  href="{{ url_for('contracts.edit_contract', contract_id=c['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('contracts.delete_contract', contract_id=c['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this contract?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No contracts yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

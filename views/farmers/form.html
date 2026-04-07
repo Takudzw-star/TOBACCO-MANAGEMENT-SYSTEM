@@ -1,0 +1,166 @@
+{% extends "_layout.html" %}
+{% if farmer %}
+  {% set page_title = "Edit Farmer" %}
+{% else %}
+  {% set page_title = "New Farmer" %}
+{% endif %}
+{% block title %}{{ page_title }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ page_title }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('farmers.list_farmers') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input
+            class="form-control"
+            name="name"
+            required
+            value="{{ farmer['name'] if farmer else '' }}"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contact info</label>
+          <input class="form-control" name="contact_info" value="{{ farmer['contact_info'] if farmer else '' }}" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <input class="form-control" name="address" value="{{ farmer['address'] if farmer else '' }}" />
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Land size (ha)</label>
+            <input
+              class="form-control"
+              name="land_size_ha"
+              inputmode="decimal"
+              value="{{ farmer['land_size_ha'] if farmer and farmer.get('land_size_ha') is not none else '' }}"
+              placeholder="e.g. 2.5"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Latitude</label>
+            <input
+              class="form-control"
+              name="lat"
+              inputmode="decimal"
+              value="{{ farmer['lat'] if farmer and farmer.get('lat') is not none else '' }}"
+              placeholder="e.g. -17.8252"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Longitude</label>
+            <input
+              class="form-control"
+              name="lng"
+              inputmode="decimal"
+              value="{{ farmer['lng'] if farmer and farmer.get('lng') is not none else '' }}"
+              placeholder="e.g. 31.0335"
+            />
+          </div>
+          <div class="col-12">
+            <div class="form-text">
+              GPS is optional. If set, the farmer will appear on the map view.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-check mb-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="contract_status"
+            name="contract_status"
+            {% if farmer and farmer['contract_status'] %}checked{% endif %}
+          />
+          <label class="form-check-label" for="contract_status">Contract active</label>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary" type="submit">Save</button>
+          <button class="btn btn-outline-secondary" type="button" id="saveDraftBtn">Save offline draft</button>
+          <a class="btn btn-outline-secondary" href="{{ url_for('offline_drafts.drafts_home') }}">Offline drafts</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const KEY = 'tms_offline_drafts_v1';
+      const btn = document.getElementById('saveDraftBtn');
+      const params = new URLSearchParams(window.location.search);
+      const draftId = params.get('draft_id');
+
+      function loadDrafts() {
+        try { return JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { return []; }
+      }
+      function saveDrafts(d) {
+        localStorage.setItem(KEY, JSON.stringify(d));
+      }
+      function toObj(form) {
+        const fd = new FormData(form);
+        const obj = {};
+        for (const [k, v] of fd.entries()) obj[k] = v;
+        return obj;
+      }
+
+      const form = btn?.closest('form') || document.querySelector('form');
+
+      function uuid() {
+        try { return crypto.randomUUID(); } catch (e) { return String(Date.now()) + '-' + Math.random().toString(16).slice(2); }
+      }
+
+      function applyDraft(draft) {
+        if (!draft || !draft.data) return;
+        const data = draft.data;
+        Object.keys(data).forEach((k) => {
+          const el = form.elements.namedItem(k);
+          if (!el) return;
+          if (el.type === 'checkbox') {
+            el.checked = !!data[k];
+          } else {
+            el.value = data[k];
+          }
+        });
+        const note = document.createElement('div');
+        note.className = 'alert alert-warning';
+        note.textContent = 'Offline draft loaded. Review and press Save to submit when online.';
+        form.prepend(note);
+      }
+
+      if (draftId) {
+        const drafts = loadDrafts();
+        const found = drafts.find((d) => d.id === draftId);
+        if (found) applyDraft(found);
+      }
+
+      if (!btn) return;
+
+      btn.addEventListener('click', () => {
+        const data = toObj(form);
+        const drafts = loadDrafts();
+        const id = uuid();
+        drafts.unshift({
+          id,
+          type: 'farmer',
+          title: (data.name || 'New farmer'),
+          saved_at: Date.now(),
+          open_url: '{{ url_for("farmers.create_farmer") }}' + '?draft_id=' + encodeURIComponent(id),
+          data
+        });
+        saveDrafts(drafts.slice(0, 50));
+        alert('Draft saved on this device.');
+      });
+    })();
+  </script>
+{% endblock %}
+

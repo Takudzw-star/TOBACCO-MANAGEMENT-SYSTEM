@@ -1,0 +1,55 @@
+{% extends "_layout.html" %}
+{% block title %}Loans · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Loans / Advances</h1>
+    <a class="btn btn-primary" href="{{ url_for('loans.create_loan') }}">New loan</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 90px">ID</th>
+            <th>Farmer</th>
+            <th style="width: 120px">Contract</th>
+            <th style="width: 140px">Date</th>
+            <th class="text-end" style="width: 140px">Principal</th>
+            <th class="text-end" style="width: 140px">Repaid</th>
+            <th class="text-end" style="width: 140px">Balance</th>
+            <th style="width: 110px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in loans %}
+            <tr>
+              <td class="fw-semibold">
+                <a href="{{ url_for('loans.loan_detail', loan_id=l['id']) }}">#{{ l["id"] }}</a>
+              </td>
+              <td>{{ l["farmer_name"] or "—" }}</td>
+              <td>{% if l["contract_id"] %}#{{ l["contract_id"] }}{% else %}—{% endif %}</td>
+              <td>{{ l["loan_date"] or "" }}</td>
+              <td class="text-end">{{ "%.2f"|format(l["principal"] or 0) }}</td>
+              <td class="text-end">{{ "%.2f"|format(l["repaid_amount"] or 0) }}</td>
+              <td class="text-end">{{ "%.2f"|format(l["balance"] or 0) }}</td>
+              <td>
+                {% if l["status"] == "closed" %}
+                  <span class="badge text-bg-secondary">Closed</span>
+                {% else %}
+                  <span class="badge text-bg-warning">Open</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">No loans yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

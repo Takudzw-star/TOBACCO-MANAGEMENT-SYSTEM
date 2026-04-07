@@ -1,0 +1,105 @@
+{% extends "_layout.html" %}
+{% block title %}Reminders · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Reminders</h1>
+    {% include "_back_to_menu.html" %}
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label mb-1">Expiring within (days)</label>
+          <input class="form-control" name="days" inputmode="numeric" value="{{ filters.days }}" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label mb-1">Overdue if no payment in (days)</label>
+          <input class="form-control" name="overdue_days" inputmode="numeric" value="{{ filters.overdue_days }}" />
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100" type="submit">Apply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-0">Expiring contracts</h2>
+          <div class="text-muted small mt-1">End date within {{ filters.days }} days</div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Contract</th>
+                <th>Farmer</th>
+                <th>Officer</th>
+                <th style="width: 140px">End</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in expiring %}
+                <tr>
+                  <td><a href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}">#{{ c["id"] }}</a></td>
+                  <td>{{ c["farmer_name"] or "" }}</td>
+                  <td>
+                    {{ c["officer_name"] or "" }}
+                    {% if c["officer_region"] %}<span class="text-muted">({{ c["officer_region"] }})</span>{% endif %}
+                  </td>
+                  <td>{{ c["end_date"] }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="4" class="text-center text-muted py-4">No expiring contracts.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-0">Overdue payments</h2>
+          <div class="text-muted small mt-1">No payment in {{ filters.overdue_days }} days (or never)</div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Contract</th>
+                <th>Farmer</th>
+                <th>Officer</th>
+                <th style="width: 160px">Last payment</th>
+                <th style="width: 140px" class="text-end">Total paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in overdue %}
+                <tr>
+                  <td><a href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}">#{{ c["id"] }}</a></td>
+                  <td>{{ c["farmer_name"] or "" }}</td>
+                  <td>{{ c["officer_name"] or "" }}</td>
+                  <td class="text-muted">{{ c["last_payment_date"] or "No payments" }}</td>
+                  <td class="text-end">{{ "%.2f"|format(c["total_paid"] or 0) }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">No overdue contracts.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

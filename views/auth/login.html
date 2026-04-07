@@ -1,0 +1,88 @@
+{% extends "_layout.html" %}
+{% block title %}Login · TMS{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="h4 mb-3">Login</h1>
+
+          <form method="post">
+            <input type="hidden" name="next_url" value="{{ next_url }}" />
+
+            {% set choices = user_choices or [] %}
+            {% set roles = [] %}
+            {% for u in choices %}
+              {% if u.role not in roles %}
+                {% set _ = roles.append(u.role) %}
+              {% endif %}
+            {% endfor %}
+
+            <div class="mb-3">
+              <label class="form-label">Login as role</label>
+              <select class="form-select" id="roleSelect">
+                <option value="" selected>— Select role (optional) —</option>
+                {% for r in roles %}
+                  <option value="{{ r }}">{{ r }}</option>
+                {% endfor %}
+              </select>
+              <div class="form-text">Optional: pick a role, then choose a user account for that role.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">User</label>
+              <select class="form-select" name="user_id" id="userSelect">
+                <option value="" selected>— Select user (optional) —</option>
+                {% for u in choices %}
+                  <option value="{{ u.id }}" data-role="{{ u.role }}">{{ u.username }} ({{ u.role }})</option>
+                {% endfor %}
+              </select>
+              <div class="form-text">If you don’t select a user, you can type a username manually below.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input class="form-control" name="username" autocomplete="username" placeholder="Type username…" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input class="form-control" type="password" name="password" autocomplete="current-password" required />
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit">Sign in</button>
+
+            <div class="text-muted small mt-3">
+              Default admin (first run): <span class="fw-semibold">admin</span> / <span class="fw-semibold">admin123</span>
+            </div>
+          </form>
+
+          <script>
+            (function () {
+              const roleSelect = document.getElementById('roleSelect');
+              const userSelect = document.getElementById('userSelect');
+
+              function applyRoleFilter(role) {
+                const opts = Array.from(userSelect.options);
+                opts.forEach((o) => {
+                  if (!o.value) return;
+                  const r = o.getAttribute('data-role') || '';
+                  o.hidden = !!role && r !== role;
+                });
+                // reset selection if hidden
+                if (userSelect.selectedOptions.length && userSelect.selectedOptions[0].hidden) {
+                  userSelect.value = '';
+                }
+              }
+
+              roleSelect?.addEventListener('change', () => applyRoleFilter(roleSelect.value));
+              applyRoleFilter(roleSelect?.value || '');
+            })();
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

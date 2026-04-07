@@ -1,0 +1,66 @@
+{% extends "_layout.html" %}
+{% block title %}{{ doc["title"] }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-print-none d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h4 mb-0">{{ doc["title"] }}</h1>
+      <div class="text-muted small">
+        {% if doc["template_name"] %}Template: {{ doc["template_name"] }} · {% endif %}
+        Created: {{ doc["created_at"] }}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" type="button" onclick="window.print()">Print</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('contract_documents.list_documents', contract_id=contract_id) }}">Back</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <pre class="mb-0" style="white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">{{ doc["body"] }}</pre>
+    </div>
+  </div>
+
+  {% if signatures %}
+    <div class="card mt-3">
+      <div class="card-body">
+        <h2 class="h6 text-uppercase text-muted mb-2">Signatures</h2>
+        <div class="row g-2">
+          {% for s in signatures %}
+            <div class="col-md-4">
+              <div class="border rounded p-2">
+                <div class="text-muted small">{{ s["signer_role"] }}</div>
+                <div class="fw-semibold">{{ s["signer_name"] }}</div>
+                <div class="text-muted small">{{ s["signed_at"] }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <style>
+    @media print {
+      .navbar,
+      .btn,
+      .alert {
+        display: none !important;
+      }
+      main.container {
+        max-width: 100% !important;
+      }
+      .card {
+        border: none !important;
+      }
+      .card-body {
+        padding: 0 !important;
+      }
+      pre {
+        font-size: 12pt;
+      }
+    }
+  </style>
+{% endblock %}
+

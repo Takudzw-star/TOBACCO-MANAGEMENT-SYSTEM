@@ -1,0 +1,54 @@
+{% extends "_layout.html" %}
+{% if employee and employee.get('id') %}
+  {% set page_title = "Edit Employee" %}
+{% else %}
+  {% set page_title = "New Employee" %}
+{% endif %}
+{% block title %}{{ page_title }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ page_title }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('employees.list_employees') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input class="form-control" name="name" required value="{{ employee['name'] if employee else '' }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Position</label>
+            <input class="form-control" name="position" value="{{ employee['position'] if employee else '' }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Salary</label>
+            <input
+              class="form-control"
+              name="salary"
+              inputmode="decimal"
+              value="{{ employee['salary'] if employee and employee.get('salary') is not none else '' }}"
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Hire date</label>
+            <input
+              type="date"
+              class="form-control"
+              name="hire_date"
+              value="{{ employee['hire_date'] if employee and employee.get('hire_date') else '' }}"
+            />
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,70 @@
+{% extends "_layout.html" %}
+{% block title %}Farmers map · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Farmers map</h1>
+      <div class="text-muted small">{{ points|length }} farmers with GPS coordinates</div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('farmers.list_farmers') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div id="map" style="height: 520px"></div>
+      <div class="text-muted small mt-2">
+        Tip: add GPS coordinates in a farmer profile to show them here.
+      </div>
+    </div>
+  </div>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    const points = {{ points | tojson }};
+    const map = L.map('map');
+
+    const fallbackCenter = [-17.8252, 31.0335]; // sensible default (Harare-ish)
+    const center = points.length ? [points[0].lat, points[0].lng] : fallbackCenter;
+    map.setView(center, points.length ? 9 : 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const markers = [];
+    for (const p of points) {
+      const popup = `
+        <div style="min-width: 220px">
+          <div style="font-weight: 600">${p.name}</div>
+          <div style="color: #666">ID: ${p.id}</div>
+          ${p.land_size_ha != null ? `<div style="color:#666">Land: ${Number(p.land_size_ha).toFixed(2)} ha</div>` : ''}
+          ${p.address ? `<div style="margin-top:6px">${p.address}</div>` : ''}
+          <div style="margin-top:8px">
+            <a href="/farmers/${p.id}">Open profile</a>
+          </div>
+        </div>
+      `;
+      const m = L.marker([p.lat, p.lng]).addTo(map).bindPopup(popup);
+      markers.push(m);
+    }
+
+    if (markers.length > 1) {
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds().pad(0.2));
+    }
+  </script>
+{% endblock %}
+

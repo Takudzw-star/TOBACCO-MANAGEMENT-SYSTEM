@@ -1,0 +1,89 @@
+{% extends "_layout.html" %}
+{% block title %}Contract documents · #{{ contract["id"] }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Contract documents</h1>
+      <div class="text-muted small">
+        Contract #{{ contract["id"] }} · {{ contract["farmer_name"] or "" }} · {{ contract["field_officer_name"] or "" }}
+      </div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Back</a>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="h5 mb-3">Generate document</h2>
+      <form method="post" action="{{ url_for('contract_documents.generate_document', contract_id=contract['id']) }}" class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Template</label>
+          <select class="form-select" name="template_id" required>
+            <option value="" selected disabled>Select template…</option>
+            {% for t in templates %}
+              <option value="{{ t['id'] }}">{{ t['name'] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Title (optional)</label>
+          <input class="form-control" name="title" placeholder="Leave blank for default title" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">Generate</button>
+        </div>
+        {% if not templates %}
+          <div class="col-12 text-muted small">
+            No templates yet. Create one in <a href="{{ url_for('contract_templates.list_templates') }}">Contract templates</a>.
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Title</th>
+            <th style="width: 180px">Template</th>
+            <th style="width: 200px">Created</th>
+            <th style="width: 160px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in documents %}
+            <tr>
+              <td>{{ d["id"] }}</td>
+              <td class="fw-semibold">{{ d["title"] }}</td>
+              <td class="text-muted">{{ d["template_name"] or "" }}</td>
+              <td class="text-muted">{{ d["created_at"] }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contract_documents.view_document', contract_id=contract['id'], doc_id=d['id']) }}"
+                  >View</a
+                >
+                {% if session.get('role') == 'admin' %}
+                  <form
+                    method="post"
+                    action="{{ url_for('contract_documents.delete_document', contract_id=contract['id'], doc_id=d['id']) }}"
+                    class="d-inline"
+                    onsubmit="return confirm('Delete this document?');"
+                  >
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">No documents generated yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

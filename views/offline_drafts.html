@@ -1,0 +1,91 @@
+{% extends "_layout.html" %}
+{% block title %}Offline drafts · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Offline drafts</h1>
+      <div class="text-muted small">Saved on this device only. Submit when you are online.</div>
+    </div>
+    {% include "_back_to_menu.html" %}
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div id="draftsEmpty" class="text-muted d-none">No drafts found.</div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0" id="draftsTable">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Saved</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const KEY = 'tms_offline_drafts_v1';
+      const tbody = document.querySelector('#draftsTable tbody');
+      const empty = document.getElementById('draftsEmpty');
+
+      function loadDrafts() {
+        try {
+          return JSON.parse(localStorage.getItem(KEY) || '[]') || [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveDrafts(d) {
+        localStorage.setItem(KEY, JSON.stringify(d));
+      }
+
+      function fmt(ts) {
+        try {
+          return new Date(ts).toLocaleString();
+        } catch (e) {
+          return '';
+        }
+      }
+
+      const drafts = loadDrafts();
+      if (!drafts.length) {
+        empty.classList.remove('d-none');
+        document.getElementById('draftsTable').classList.add('d-none');
+        return;
+      }
+
+      drafts.forEach((d, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="fw-semibold">${d.type || ''}</td>
+          <td>${d.title || ''}</td>
+          <td class="text-muted">${fmt(d.saved_at)}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="${d.open_url || '#'}">Open</a>
+            <button class="btn btn-sm btn-outline-danger" type="button" data-idx="${idx}">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-idx]');
+        if (!btn) return;
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        const arr = loadDrafts();
+        arr.splice(i, 1);
+        saveDrafts(arr);
+        window.location.reload();
+      });
+    })();
+  </script>
+{% endblock %}
+

@@ -1,0 +1,64 @@
+{% extends "_layout.html" %}
+{% block title %}Field Officers · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Field Officers</h1>
+    <a class="btn btn-primary" href="{{ url_for('field_officers.create_field_officer') }}">New Field Officer</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Name</th>
+            <th>Region</th>
+            <th>Contact</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in officers %}
+            <tr>
+              <td>{{ o["id"] }}</td>
+              <td class="fw-semibold">
+                <a class="link-underline link-underline-opacity-0" href="{{ url_for('field_officers.field_officer_detail', officer_id=o['id']) }}">
+                  {{ o["name"] }}
+                </a>
+              </td>
+              <td>{{ o["region"] or "" }}</td>
+              <td>{{ o["contact_info"] or "" }}</td>
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-primary"
+                  href="{{ url_for('field_officers.field_officer_detail', officer_id=o['id']) }}"
+                  >View</a
+                >
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  href="{{ url_for('field_officers.edit_field_officer', officer_id=o['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('field_officers.delete_field_officer', officer_id=o['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this field officer?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">No field officers yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

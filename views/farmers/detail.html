@@ -1,0 +1,175 @@
+{% extends "_layout.html" %}
+{% block title %}{{ farmer["name"] }} · Farmers · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-1">{{ farmer["name"] }}</h1>
+      <div class="text-muted">
+        {{ farmer["contact_info"] or "" }}
+        {% if farmer["contact_info"] and farmer["address"] %} · {% endif %}
+        {{ farmer["address"] or "" }}
+      </div>
+      <div class="text-muted small mt-1">
+        {% if farmer["land_size_ha"] is not none %}Land: {{ "%.2f"|format(farmer["land_size_ha"]) }} ha · {% endif %}
+        {% if farmer["lat"] is not none and farmer["lng"] is not none %}GPS: {{ farmer["lat"] }}, {{ farmer["lng"] }}{% endif %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{{ url_for('farmers.list_farmers') }}">Back</a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('farmers.edit_farmer', farmer_id=farmer['id']) }}">Edit</a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('farmer_crops.list_crops', farmer_id=farmer['id']) }}">Crop history</a>
+      <a class="btn btn-primary" href="{{ url_for('contracts.create_contract') }}">New Contract</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Productivity score</div>
+          <div class="fs-3 fw-semibold">
+            {% if intelligence.productivity_score is not none %}
+              {{ intelligence.productivity_score }} / 100
+            {% else %}
+              —
+            {% endif %}
+          </div>
+          <div class="text-muted small">
+            {% if intelligence.latest_season %}Season: {{ intelligence.latest_season }}{% else %}Need land size + yields{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Risk level</div>
+          <div class="fs-3 fw-semibold">{{ intelligence.risk_level }}</div>
+          <div class="text-muted small">Based on yield trend</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Yield history</div>
+          <div class="mt-2">
+            {% for y in yield_history %}
+              <div class="d-flex justify-content-between">
+                <span class="text-muted">{{ y["season"] }}</span>
+                <span class="fw-semibold">{{ "%.2f"|format(y["total_kg"] or 0) }} kg</span>
+              </div>
+            {% else %}
+              <div class="text-muted">No yields yet.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="h5 mb-2">Crop history (latest)</h2>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Season</th>
+              <th>Crop</th>
+              <th class="text-end" style="width: 160px">Area (ha)</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in crop_history %}
+              <tr>
+                <td>{{ c["season"] }}</td>
+                <td class="fw-semibold">{{ c["crop"] }}</td>
+                <td class="text-end">{% if c["area_ha"] is not none %}{{ "%.2f"|format(c["area_ha"]) }}{% endif %}</td>
+                <td class="text-truncate" style="max-width: 520px">{{ c["notes"] or "" }}</td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="4" class="text-muted">No crop history yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Contracts</div>
+          <div class="fs-3 fw-semibold">{{ totals["contract_count"] or 0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Total paid</div>
+          <div class="fs-3 fw-semibold">{{ "%.2f"|format(totals["total_paid"] or 0) }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Last payment date</div>
+          <div class="fs-3 fw-semibold">{{ totals["last_payment_date"] or "—" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 mb-0">Contracts</h2>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 90px">ID</th>
+            <th>Field Officer</th>
+            <th style="width: 140px">Date</th>
+            <th style="width: 160px" class="text-end">Total paid</th>
+            <th style="width: 160px">Last payment</th>
+            <th style="width: 140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in contracts %}
+            <tr>
+              <td>#{{ c["contract_id"] }}</td>
+              <td>
+                {{ c["field_officer_name"] or "—" }}
+                {% if c["field_officer_region"] %}<span class="text-muted">({{ c["field_officer_region"] }})</span>{% endif %}
+              </td>
+              <td>{{ c["contract_date"] or "" }}</td>
+              <td class="text-end">{{ "%.2f"|format(c["total_paid"] or 0) }}</td>
+              <td>{{ c["last_payment_date"] or "—" }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contracts.contract_detail', contract_id=c['contract_id']) }}"
+                  >View</a
+                >
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No contracts yet for this farmer.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

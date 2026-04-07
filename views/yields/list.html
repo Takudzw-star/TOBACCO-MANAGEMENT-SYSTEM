@@ -1,0 +1,61 @@
+{% extends "_layout.html" %}
+{% block title %}Yields · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Yields (Harvest deliveries)</h1>
+    <a class="btn btn-primary" href="{{ url_for('yields.create_yield') }}">New Yield</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Contract</th>
+            <th style="width: 140px">Season</th>
+            <th style="width: 140px">Grade</th>
+            <th style="width: 160px" class="text-end">Weight (kg)</th>
+            <th style="width: 140px">Date</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for y in yields %}
+            <tr>
+              <td>{{ y["id"] }}</td>
+              <td>
+                <span class="fw-semibold">#{{ y["contract_id"] }}</span>
+                {% if y["farmer_name"] %}<span class="text-muted">· {{ y["farmer_name"] }}</span>{% endif %}
+                {% if y["field_officer_name"] %}<span class="text-muted">· {{ y["field_officer_name"] }}</span>{% endif %}
+              </td>
+              <td>{{ y["season"] }}</td>
+              <td>{{ y["grade"] or "" }}</td>
+              <td class="text-end">{{ "%.2f"|format(y["weight_kg"] or 0) }}</td>
+              <td>{{ y["delivery_date"] }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('yields.edit_yield', yield_id=y['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('yields.delete_yield', yield_id=y['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this yield record?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">No yield records yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

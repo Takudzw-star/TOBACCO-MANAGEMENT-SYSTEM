@@ -1,0 +1,339 @@
+{% extends "_layout.html" %}
+{% block title %}Dashboards · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Dashboard</h1>
+      <div class="text-muted small">Key stats, charts, alerts, and quick actions.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{{ url_for('reminders.reminders_home') }}">Alerts</a>
+    </div>
+  </div>
+
+  {% set role = session.get('role') %}
+
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <span class="badge text-bg-light border text-dark">Menu</span>
+    {% if role in ['admin', 'accountant', 'manager'] %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('finance_dashboard.finance_home') }}">Finance dashboard</a>
+    {% endif %}
+    {% if role in ['admin', 'field_officer'] %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('officer_visits.performance') }}">Officer performance</a>
+    {% endif %}
+    {% if role in ['admin', 'accountant', 'manager', 'field_officer'] %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('analytics.inputs_vs_yield') }}">Inputs vs yield</a>
+    {% endif %}
+    {% if role in ['admin', 'accountant', 'manager'] %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.reports_home') }}">Reports</a>
+    {% endif %}
+  </div>
+
+  {# Top Stats Row #}
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label mb-1">Season</label>
+          <select class="form-select" name="season" onchange="this.form.submit()">
+            {% for s in filters.available_seasons %}
+              <option value="{{ s }}" {% if metrics.season == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+            {% if not filters.available_seasons %}
+              <option value="{{ metrics.season }}" selected>{{ metrics.season }}</option>
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-8 text-md-end">
+          <div class="text-muted small">
+            Season affects Yield cards and grade summary.
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Farmers</div>
+          <div class="fs-3 fw-semibold">{{ metrics.total_farmers }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Contracts</div>
+          <div class="fs-3 fw-semibold">{{ metrics.active_contracts }}</div>
+          <div class="text-muted small">Active</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Revenue</div>
+          <div class="fs-3 fw-semibold">{{ "%.2f"|format(metrics.revenue_total or 0) }}</div>
+          <div class="text-muted small">Payments recorded</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Pending</div>
+          <div class="fs-3 fw-semibold">{{ metrics.pending_payments }}</div>
+          <div class="text-muted small">Active contracts with 0 payments</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Charts Section #}
+  <div class="row g-3 mb-3">
+    <div class="col-lg-8">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Production trend (yield)</h2>
+            <div class="text-muted small">Last 12 months</div>
+          </div>
+          <div class="mt-3" style="height: 280px">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Region distribution</h2>
+            <div class="text-muted small">Field officer regions</div>
+          </div>
+          <div class="mt-3" style="height: 280px">
+            <canvas id="regionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Yield by grade</h2>
+            <div class="text-muted small">{{ metrics.season }}</div>
+          </div>
+          <div class="mt-3" style="height: 280px">
+            <canvas id="gradeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Contract status</h2>
+            <div class="text-muted small">All contracts</div>
+          </div>
+          <div class="mt-3" style="height: 280px">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Alerts + Activity #}
+  <div class="row g-3 mb-3">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Alerts</h2>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reminders.reminders_home') }}">Open reminders</a>
+          </div>
+          <div class="text-muted small mt-1">
+            Overdue = no payment in {{ alerts.overdue_days }} days · Expiring = end date within {{ alerts.expiring_days }} days
+          </div>
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="list-group-item">
+            <div class="fw-semibold mb-1">Expiring contracts</div>
+            {% for c in alerts.expiring_contracts %}
+              <div class="d-flex justify-content-between">
+                <a href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}">Contract #{{ c["id"] }}</a>
+                <span class="text-muted">{{ c["end_date"] or "" }}</span>
+              </div>
+              <div class="text-muted small">{{ c["farmer_name"] or "" }}</div>
+              {% if not loop.last %}<hr class="my-2" />{% endif %}
+            {% else %}
+              <div class="text-muted">No expiring contracts found.</div>
+            {% endfor %}
+          </div>
+          <div class="list-group-item">
+            <div class="fw-semibold mb-1">Overdue payments</div>
+            {% for c in alerts.overdue_contracts %}
+              <div class="d-flex justify-content-between">
+                <a href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}">Contract #{{ c["id"] }}</a>
+                <span class="text-muted">{{ c["last_payment_date"] or "No payments" }}</span>
+              </div>
+              <div class="text-muted small">{{ c["farmer_name"] or "" }} · Total paid: {{ "%.2f"|format(c["total_paid"] or 0) }}</div>
+              {% if not loop.last %}<hr class="my-2" />{% endif %}
+            {% else %}
+              <div class="text-muted">No overdue contracts found.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-0">Recent activity</h2>
+          <div class="text-muted small mt-1">Latest actions recorded in the system</div>
+        </div>
+        <div class="list-group list-group-flush">
+          {% for a in activity %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between">
+                <div class="fw-semibold">{{ a["action"] }} {{ a["entity"] }}</div>
+                <div class="text-muted small">{{ a["created_at"] or "" }}</div>
+              </div>
+              <div class="text-muted small">
+                {% if a["username"] %}{{ a["username"] }}{% else %}System{% endif %}
+                {% if a["entity_id"] %} · #{{ a["entity_id"] }}{% endif %}
+              </div>
+            </div>
+          {% else %}
+            <div class="list-group-item text-muted">No activity yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Quick Actions #}
+  <div class="card">
+    <div class="card-body">
+      <h2 class="h5 mb-3">Quick actions</h2>
+      <div class="d-flex flex-wrap gap-2">
+        {% if role in ['admin', 'field_officer'] %}
+          <a class="btn btn-primary" href="{{ url_for('farmers.create_farmer') }}">+ Add Farmer</a>
+          <a class="btn btn-outline-primary" href="{{ url_for('contracts.create_contract') }}">+ New Contract</a>
+        {% endif %}
+        {% if role in ['admin', 'accountant'] %}
+          <a class="btn btn-outline-primary" href="{{ url_for('transactions.create_transaction') }}">Record Payment</a>
+        {% endif %}
+        <a class="btn btn-outline-secondary" href="{{ url_for('search.search_home') }}">Search</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script>
+    const trend = {{ charts.trend | tojson }};
+    const trendLabels = trend.map(x => x.ym);
+    const trendData = trend.map(x => x.total);
+
+    const region = {{ charts.region_distribution | tojson }};
+    const regionLabels = region.map(x => x.region);
+    const regionData = region.map(x => x.count);
+
+    const trendCtx = document.getElementById('trendChart');
+    if (trendCtx) {
+      new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: trendLabels,
+          datasets: [{
+            label: 'Total amount',
+            data: trendData,
+            borderWidth: 2,
+            tension: 0.25,
+            fill: true
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    const regionCtx = document.getElementById('regionChart');
+    if (regionCtx) {
+      new Chart(regionCtx, {
+        type: 'doughnut',
+        data: {
+          labels: regionLabels,
+          datasets: [{
+            data: regionData,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    const grade = {{ charts.grade_summary | tojson }};
+    const gradeLabels = grade.map(x => x.grade);
+    const gradeData = grade.map(x => x.total);
+
+    const gradeCtx = document.getElementById('gradeChart');
+    if (gradeCtx) {
+      new Chart(gradeCtx, {
+        type: 'bar',
+        data: {
+          labels: gradeLabels,
+          datasets: [{
+            label: 'Kg',
+            data: gradeData,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    const status = {{ charts.contract_status | tojson }};
+    const statusLabels = status.map(x => x.status);
+    const statusData = status.map(x => x.count);
+    const statusCtx = document.getElementById('statusChart');
+    if (statusCtx) {
+      new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            data: statusData,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+  </script>
+{% endblock %}
+

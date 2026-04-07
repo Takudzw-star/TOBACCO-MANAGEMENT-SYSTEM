@@ -1,0 +1,113 @@
+{% extends "_layout.html" %}
+{% if input_row and input_row.get('id') %}
+  {% set page_title = "Edit Input" %}
+{% else %}
+  {% set page_title = "New Input" %}
+{% endif %}
+{% block title %}{{ page_title }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ page_title }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('inputs.list_inputs') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        {% if return_to %}
+          <input type="hidden" name="return_to" value="{{ return_to }}" />
+        {% endif %}
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Contract</label>
+            <select class="form-select" name="contract_id" required>
+              <option value="" disabled {% if not input_row or not input_row['contract_id'] %}selected{% endif %}>
+                Select contract…
+              </option>
+              {% for c in contracts %}
+                <option
+                  value="{{ c['id'] }}"
+                  {% if input_row and input_row.get('contract_id') == c['id'] %}selected{% endif %}
+                >
+                  #{{ c['id'] }} · {{ c['farmer_name'] or '—' }} · {{ c['field_officer_name'] or '—' }}
+                  {% if c['contract_date'] %} ({{ c['contract_date'] }}){% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Issue date</label>
+            <input
+              type="date"
+              class="form-control"
+              name="issue_date"
+              value="{{ input_row['issue_date'] if input_row and input_row.get('issue_date') else '' }}"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Input item</label>
+            <select class="form-select" name="item_id" required>
+              <option value="" disabled {% if not input_row or not input_row.get('item_id') %}selected{% endif %}>
+                Select item…
+              </option>
+              {% for it in items %}
+                <option
+                  value="{{ it['id'] }}"
+                  {% if input_row and input_row.get('item_id') == it['id'] %}selected{% endif %}
+                >
+                  {{ it['category'] }} · {{ it['name'] }}
+                </option>
+              {% endfor %}
+            </select>
+            <div class="form-text">
+              Catalog items are managed in <span class="fw-semibold">Input Catalog</span>.
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Quantity</label>
+            <input
+              class="form-control"
+              name="quantity"
+              inputmode="decimal"
+              required
+              value="{{ input_row['quantity'] if input_row and input_row.get('quantity') is not none else '' }}"
+              placeholder="e.g. 10"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Unit</label>
+            <input class="form-control" name="unit" value="{{ input_row['unit'] if input_row and input_row.get('unit') else '' }}" placeholder="e.g. kg, bags" />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Unit cost (optional)</label>
+            <input
+              class="form-control"
+              name="unit_cost"
+              inputmode="decimal"
+              value="{{ input_row['unit_cost'] if input_row and input_row.get('unit_cost') is not none else '' }}"
+              placeholder="e.g. 12.50"
+            />
+            <div class="form-text">If blank, uses the catalog’s default unit cost (if set).</div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="4">{{ input_row['description'] if input_row and input_row.get('description') else '' }}</textarea>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,118 @@
+{% extends "_layout.html" %}
+{% block title %}Inputs vs Yield · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Inputs vs Yield</h1>
+      <div class="text-muted">Cost-efficiency view: inputs cost, yield, and cost per kg.</div>
+    </div>
+    <div class="d-flex gap-2">
+      {% include "_back_to_menu.html" %}
+    </div>
+  </div>
+
+  <form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-sm-4 col-md-3">
+      <label class="form-label">Season</label>
+      <select class="form-select" name="season">
+        <option value="" {% if not season %}selected{% endif %}>All seasons</option>
+        {% for s in available_seasons %}
+          <option value="{{ s }}" {% if season == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-primary" type="submit">Apply</button>
+    </div>
+  </form>
+
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-3">By region</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>Region</th>
+                  <th class="text-end">Inputs cost</th>
+                  <th class="text-end">Yield (kg)</th>
+                  <th class="text-end">Cost/kg</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in regions %}
+                  <tr>
+                    <td class="fw-semibold">{{ r["region"] }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["inputs_cost"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["yield_kg"] or 0) }}</td>
+                    <td class="text-end">
+                      {% if r["cost_per_kg"] is not none %}
+                        {{ "%.4f"|format(r["cost_per_kg"]) }}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="4" class="text-muted">No data yet.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-3">By contract</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 90px">Contract</th>
+                  <th>Farmer</th>
+                  <th>Region</th>
+                  <th class="text-end">Inputs cost</th>
+                  <th class="text-end">Yield (kg)</th>
+                  <th class="text-end">Cost/kg</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in rows %}
+                  <tr>
+                    <td class="fw-semibold">
+                      <a href="{{ url_for('contracts.contract_detail', contract_id=r['contract_id']) }}">#{{ r["contract_id"] }}</a>
+                    </td>
+                    <td>{{ r["farmer_name"] }}</td>
+                    <td>{{ r["region"] }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["inputs_cost"] or 0) }}</td>
+                    <td class="text-end">{{ "%.2f"|format(r["yield_kg"] or 0) }}</td>
+                    <td class="text-end">
+                      {% if r["cost_per_kg"] is not none %}
+                        {{ "%.4f"|format(r["cost_per_kg"]) }}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="6" class="text-muted">No data yet. Add Input Catalog items and issue inputs with unit costs.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

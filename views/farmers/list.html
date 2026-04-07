@@ -1,0 +1,68 @@
+{% extends "_layout.html" %}
+{% block title %}Farmers · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Farmers</h1>
+    <a class="btn btn-primary" href="{{ url_for('farmers.create_farmer') }}">New Farmer</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th style="width: 140px">Contract</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in farmers %}
+            <tr>
+              <td>{{ f["id"] }}</td>
+              <td class="fw-semibold">
+                <a class="link-underline link-underline-opacity-0" href="{{ url_for('farmers.farmer_detail', farmer_id=f['id']) }}">
+                  {{ f["name"] }}
+                </a>
+              </td>
+              <td>{{ f["contact_info"] or "" }}</td>
+              <td>{{ f["address"] or "" }}</td>
+              <td>
+                {% if f["contract_status"] %}
+                  <span class="badge text-bg-success">Active</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">Inactive</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('farmers.farmer_detail', farmer_id=f['id']) }}"
+                  >View</a
+                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('farmers.edit_farmer', farmer_id=f['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('farmers.delete_farmer', farmer_id=f['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this farmer?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No farmers yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

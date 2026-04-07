@@ -1,0 +1,82 @@
+{% extends "_layout.html" %}
+{% block title %}Accounts · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Accounts (Transactions)</h1>
+    <a class="btn btn-primary" href="{{ url_for('transactions.create_transaction') }}">New Transaction</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th style="width: 170px">Reference</th>
+            <th style="width: 130px">Type</th>
+            <th>Contract</th>
+            <th style="width: 140px" class="text-end">Amount</th>
+            <th style="width: 140px">Date</th>
+            <th>Description</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in transactions %}
+            <tr>
+              <td>{{ t["id"] }}</td>
+              <td class="text-muted">{{ t["reference"] or "" }}</td>
+              <td>
+                {% set tt = t["tx_type"] or "payment" %}
+                {% if tt == "payment" %}
+                  <span class="badge text-bg-success">Payment</span>
+                {% elif tt == "advance" %}
+                  <span class="badge text-bg-warning">Advance</span>
+                {% elif tt == "repayment" %}
+                  <span class="badge text-bg-info">Repayment</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">{{ tt }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="fw-semibold">#{{ t["contract_id"] }}</span>
+                {% if t["farmer_name"] %}<span class="text-muted">· {{ t["farmer_name"] }}</span>{% endif %}
+                {% if t["field_officer_name"] %}<span class="text-muted">· {{ t["field_officer_name"] }}</span>{% endif %}
+              </td>
+              <td class="text-end">{{ "%.2f"|format(t["amount"] or 0) }}</td>
+              <td>{{ t["transaction_date"] or "" }}</td>
+              <td class="text-truncate" style="max-width: 420px">{{ t["description"] or "" }}</td>
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-primary"
+                  href="{{ url_for('transactions.transaction_receipt', transaction_id=t['id']) }}"
+                  target="_blank"
+                  >Receipt</a
+                >
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  href="{{ url_for('transactions.edit_transaction', transaction_id=t['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('transactions.delete_transaction', transaction_id=t['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this transaction?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">No transactions yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

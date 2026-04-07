@@ -1,0 +1,83 @@
+{% extends "_layout.html" %}
+{% block title %}Signatures · Contract #{{ contract["id"] }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Signatures</h1>
+      <div class="text-muted small">
+        Contract #{{ contract["id"] }} · {{ contract["farmer_name"] or "" }} · {{ contract["field_officer_name"] or "" }}
+      </div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Back</a>
+  </div>
+
+  {% if session.get('role') in ['admin', 'field_officer'] %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Add signature</h2>
+        <form method="post" action="{{ url_for('contract_signatures.add_signature', contract_id=contract['id']) }}" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Signer role</label>
+            <select class="form-select" name="signer_role" required>
+              {% for r in roles %}
+                <option value="{{ r }}">{{ r }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-7">
+            <label class="form-label">Signer name</label>
+            <input class="form-control" name="signer_name" required placeholder="Type full name" />
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100" type="submit">Sign</button>
+          </div>
+          <div class="col-12 text-muted small">
+            This is a “typed signature” (no biometrics). It’s still useful for accountability.
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 180px">Role</th>
+            <th>Name</th>
+            <th style="width: 220px">Signed at</th>
+            <th style="width: 160px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in signatures %}
+            <tr>
+              <td class="text-muted">{{ s["signer_role"] }}</td>
+              <td class="fw-semibold">{{ s["signer_name"] }}</td>
+              <td class="text-muted">{{ s["signed_at"] }}</td>
+              <td class="text-end">
+                {% if session.get('role') == 'admin' %}
+                  <form
+                    method="post"
+                    action="{{ url_for('contract_signatures.delete_signature', contract_id=contract['id'], sig_id=s['id']) }}"
+                    class="d-inline"
+                    onsubmit="return confirm('Delete this signature?');"
+                  >
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">No signatures yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

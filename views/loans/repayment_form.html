@@ -1,0 +1,45 @@
+{% extends "_layout.html" %}
+{% block title %}Add repayment · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Add repayment</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('loans.loan_detail', loan_id=loan_id) }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Repayment date</label>
+          <input class="form-control" type="date" name="repayment_date" value="{{ repayment['repayment_date'] if repayment and repayment.get('repayment_date') else '' }}" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Amount</label>
+          <input class="form-control" name="amount" inputmode="decimal" required placeholder="e.g. 100.00" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Method (optional)</label>
+          <input class="form-control" name="method" placeholder="e.g. Cash, Bank" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Reference (optional)</label>
+          <input class="form-control" name="reference" placeholder="e.g. receipt / bank ref" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Notes (optional)</label>
+          <input class="form-control" name="notes" placeholder="Any extra detail" />
+        </div>
+
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Save repayment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,297 @@
+{% extends "_layout.html" %}
+{% block title %}Contract #{{ contract["id"] }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-1">Contract #{{ contract["id"] }}</h1>
+      <div class="text-muted">
+        <span class="me-2">
+          Status:
+          {% if contract["status"] == "active" %}
+            <span class="badge text-bg-success">Active</span>
+          {% elif contract["status"] == "draft" %}
+            <span class="badge text-bg-secondary">Draft</span>
+          {% elif contract["status"] == "completed" %}
+            <span class="badge text-bg-primary">Completed</span>
+          {% elif contract["status"] == "terminated" %}
+            <span class="badge text-bg-danger">Terminated</span>
+          {% else %}
+            <span class="badge text-bg-secondary">{{ contract["status"] }}</span>
+          {% endif %}
+        </span>
+        {% if contract["contract_date"] %}Start: {{ contract["contract_date"] }}{% endif %}
+        {% if contract["end_date"] %}<span class="ms-2">End: {{ contract["end_date"] }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{{ url_for('contracts.list_contracts') }}">Back</a>
+      {% if contract["status"] in ["draft", "active"] %}
+        <a class="btn btn-outline-secondary" href="{{ url_for('contracts.edit_contract', contract_id=contract['id']) }}"
+          >Edit</a
+        >
+      {% endif %}
+      {% if contract["status"] == "active" %}
+        <a
+          class="btn btn-primary"
+          href="{{ url_for('transactions.create_transaction') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+          >Add Transaction</a
+        >
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <div class="text-muted small me-2">Lifecycle</div>
+        <form method="post" action="{{ url_for('contracts.update_contract_status', contract_id=contract['id']) }}" class="d-inline">
+          {% if contract["status"] == "draft" %}
+            <input type="hidden" name="status" value="active" />
+            <button class="btn btn-sm btn-success" type="submit">Activate</button>
+            <span class="text-muted small ms-2">or</span>
+            <button class="btn btn-sm btn-outline-danger ms-2" type="submit" name="status" value="terminated">Terminate</button>
+          {% elif contract["status"] == "active" %}
+            <button class="btn btn-sm btn-primary" type="submit" name="status" value="completed">Complete</button>
+            <button class="btn btn-sm btn-outline-danger" type="submit" name="status" value="terminated">Terminate</button>
+          {% else %}
+            <span class="text-muted">Locked ({{ contract["status"] }})</span>
+          {% endif %}
+        </form>
+        <div class="ms-auto">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_documents.list_documents', contract_id=contract['id']) }}"
+            >Documents</a
+          >
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_signatures.list_signatures', contract_id=contract['id']) }}"
+            >Signatures</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if signatures %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="h6 text-uppercase text-muted mb-2">Signatures</h2>
+        <div class="row g-2">
+          {% for s in signatures %}
+            <div class="col-md-4">
+              <div class="border rounded p-2">
+                <div class="text-muted small">{{ s["signer_role"] }}</div>
+                <div class="fw-semibold">{{ s["signer_name"] }}</div>
+                <div class="text-muted small">{{ s["signed_at"] }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row g-3 mb-3">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-uppercase text-muted">Farmer</h2>
+          <div class="fw-semibold">{{ contract["farmer_name"] or "—" }}</div>
+          <div class="text-muted">{{ contract["farmer_contact_info"] or "" }}</div>
+          <div class="text-muted">{{ contract["farmer_address"] or "" }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-uppercase text-muted">Field Officer</h2>
+          <div class="fw-semibold">{{ contract["field_officer_name"] or "—" }}</div>
+          <div class="text-muted">{{ contract["field_officer_region"] or "" }}</div>
+          <div class="text-muted">{{ contract["field_officer_contact_info"] or "" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if contract["details"] %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="h6 text-uppercase text-muted">Details</h2>
+        <div style="white-space: pre-wrap">{{ contract["details"] }}</div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 mb-0">Transactions</h2>
+    <div class="text-muted">
+      Total: <span class="fw-semibold">{{ "%.2f"|format(total_amount or 0) }}</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th style="width: 140px" class="text-end">Amount</th>
+            <th style="width: 140px">Date</th>
+            <th>Description</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in transactions %}
+            <tr>
+              <td>{{ t["id"] }}</td>
+              <td class="text-end">{{ "%.2f"|format(t["amount"] or 0) }}</td>
+              <td>{{ t["transaction_date"] or "" }}</td>
+              <td class="text-truncate" style="max-width: 520px">{{ t["description"] or "" }}</td>
+              <td class="text-end" style="width: 190px">
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  href="{{ url_for('transactions.edit_transaction', transaction_id=t['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('transactions.delete_transaction', transaction_id=t['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this transaction?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                No transactions yet. Add one from the Accounts page or use “Add Transaction” above.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+    <h2 class="h5 mb-0">Yield deliveries</h2>
+    <div class="d-flex align-items-center gap-2">
+      <div class="text-muted small">
+        Total: <span class="fw-semibold">{{ "%.2f"|format(total_yield_kg or 0) }}</span> kg
+      </div>
+      <a
+        class="btn btn-sm btn-outline-primary"
+        href="{{ url_for('yields.create_yield') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+        >Add Yield</a
+      >
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th style="width: 140px">Season</th>
+            <th style="width: 120px">Grade</th>
+            <th style="width: 160px" class="text-end">Weight (kg)</th>
+            <th style="width: 140px">Date</th>
+            <th>Notes</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for y in yield_deliveries %}
+            <tr>
+              <td>{{ y["id"] }}</td>
+              <td>{{ y["season"] }}</td>
+              <td>{{ y["grade"] or "" }}</td>
+              <td class="text-end">{{ "%.2f"|format(y["weight_kg"] or 0) }}</td>
+              <td>{{ y["delivery_date"] }}</td>
+              <td class="text-truncate" style="max-width: 520px">{{ y["notes"] or "" }}</td>
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  href="{{ url_for('yields.edit_yield', yield_id=y['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('yields.delete_yield', yield_id=y['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this yield record?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">No yield deliveries recorded for this contract.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+    <h2 class="h5 mb-0">Inputs issued</h2>
+    <a
+      class="btn btn-sm btn-outline-primary"
+      href="{{ url_for('inputs.create_input') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+      >Add Input</a
+    >
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Item</th>
+            <th style="width: 160px" class="text-end">Qty</th>
+            <th style="width: 140px">Date</th>
+            <th>Description</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in inputs_issued %}
+            <tr>
+              <td>{{ i["id"] }}</td>
+              <td class="fw-semibold">{{ i["item"] }}</td>
+              <td class="text-end">{{ "%.2f"|format(i["quantity"] or 0) }}{% if i["unit"] %} {{ i["unit"] }}{% endif %}</td>
+              <td>{{ i["issue_date"] or "" }}</td>
+              <td class="text-truncate" style="max-width: 520px">{{ i["description"] or "" }}</td>
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  href="{{ url_for('inputs.edit_input', input_id=i['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('inputs.delete_input', input_id=i['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this input record?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">No inputs recorded for this contract.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

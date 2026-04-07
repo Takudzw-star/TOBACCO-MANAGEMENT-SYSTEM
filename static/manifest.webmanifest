@@ -1,0 +1,10 @@
+{
+  "name": "Tobacco Management System",
+  "short_name": "TMS",
+  "start_url": "/dashboards",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#212529",
+  "icons": []
+}
+

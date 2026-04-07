@@ -1,0 +1,123 @@
+{% extends "_layout.html" %}
+{% block title %}Reports · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Reports</h1>
+    <div class="d-flex gap-2">
+      <a
+        class="btn btn-outline-secondary"
+        href="{{ url_for('reports.export_reports_csv', start_date=start_date, end_date=end_date) }}"
+        >Export CSV</a
+      >
+      <button class="btn btn-outline-secondary" type="button" onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label">Start date</label>
+          <input type="date" class="form-control" name="start_date" value="{{ start_date }}" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">End date</label>
+          <input type="date" class="form-control" name="end_date" value="{{ end_date }}" />
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-primary" type="submit">Run</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Transactions</div>
+          <div class="fs-3 fw-semibold">{{ overall["tx_count"] }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted text-uppercase small">Total amount</div>
+          <div class="fs-3 fw-semibold">{{ "%.2f"|format(overall["total_amount"] or 0) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5">Totals by farmer</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Farmer</th>
+                <th style="width: 120px" class="text-end">Tx</th>
+                <th style="width: 160px" class="text-end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in by_farmer %}
+                <tr>
+                  <td>{{ r["farmer_name"] }}</td>
+                  <td class="text-end">{{ r["tx_count"] }}</td>
+                  <td class="text-end">{{ "%.2f"|format(r["total_amount"] or 0) }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="3" class="text-center text-muted py-4">No data for this range.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5">Totals by field officer</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Field Officer</th>
+                <th style="width: 120px" class="text-end">Tx</th>
+                <th style="width: 160px" class="text-end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in by_officer %}
+                <tr>
+                  <td>
+                    {{ r["field_officer_name"] }}
+                    {% if r["field_officer_region"] %}<span class="text-muted">({{ r["field_officer_region"] }})</span>{% endif %}
+                  </td>
+                  <td class="text-end">{{ r["tx_count"] }}</td>
+                  <td class="text-end">{{ "%.2f"|format(r["total_amount"] or 0) }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="3" class="text-center text-muted py-4">No data for this range.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

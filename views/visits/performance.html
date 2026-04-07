@@ -1,0 +1,125 @@
+{% extends "_layout.html" %}
+{% block title %}Field officer performance · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">Field officer performance</h1>
+      <div class="text-muted small">Week: {{ week.start }} to {{ week.end }}</div>
+    </div>
+    <div class="d-flex gap-2">
+      {% include "_back_to_menu.html" %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('officer_visits.list_visits') }}">Back</a>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-0">Leaderboard (visits this week)</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Officer</th>
+                <th class="text-end" style="width: 180px">Visits</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in leaderboard %}
+                <tr>
+                  <td>
+                    <span class="fw-semibold">{{ r["officer_name"] }}</span>
+                    {% if r["officer_region"] %}<span class="text-muted">({{ r["officer_region"] }})</span>{% endif %}
+                  </td>
+                  <td class="text-end fw-semibold">{{ r["visits_this_week"] }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="2" class="text-muted">No officers.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-0">Farmer engagement (last 30 days)</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Officer</th>
+                <th class="text-end" style="width: 180px">Farmers engaged</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in engagement %}
+                <tr>
+                  <td class="fw-semibold">{{ r["officer_name"] }}</td>
+                  <td class="text-end">{{ r["farmers_engaged_30d"] }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="2" class="text-muted">No data.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Yield improvement</h2>
+        <div class="text-muted small">
+          {% if seasons.latest and seasons.prev %}
+            Comparing {{ seasons.prev }} → {{ seasons.latest }}
+          {% else %}
+            Need at least 2 seasons of yield data
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Officer</th>
+            <th class="text-end" style="width: 180px">{{ seasons.prev or "Prev" }} (kg)</th>
+            <th class="text-end" style="width: 180px">{{ seasons.latest or "Latest" }} (kg)</th>
+            <th class="text-end" style="width: 180px">Δ (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in improvements %}
+            {% set delta = (r["latest_kg"] or 0) - (r["prev_kg"] or 0) %}
+            <tr>
+              <td class="fw-semibold">{{ r["officer_name"] }}</td>
+              <td class="text-end">{{ "%.2f"|format(r["prev_kg"] or 0) }}</td>
+              <td class="text-end">{{ "%.2f"|format(r["latest_kg"] or 0) }}</td>
+              <td class="text-end {% if delta < 0 %}text-danger{% elif delta > 0 %}text-success{% endif %}">
+                {{ "%.2f"|format(delta) }}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="text-muted">No data.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

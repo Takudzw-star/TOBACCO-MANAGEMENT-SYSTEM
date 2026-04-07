@@ -1,0 +1,90 @@
+{% extends "_layout.html" %}
+{% if transaction and transaction.get('id') %}
+  {% set page_title = "Edit Transaction" %}
+{% else %}
+  {% set page_title = "New Transaction" %}
+{% endif %}
+{% block title %}{{ page_title }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ page_title }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('transactions.list_transactions') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        {% if return_to %}
+          <input type="hidden" name="return_to" value="{{ return_to }}" />
+        {% endif %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Contract</label>
+            <select class="form-select" name="contract_id" required>
+              <option value="" disabled {% if not transaction or not transaction['contract_id'] %}selected{% endif %}>
+                Select contract…
+              </option>
+              {% for c in contracts %}
+                <option
+                  value="{{ c['id'] }}"
+                  {% if transaction and transaction.get('contract_id') == c['id'] %}selected{% endif %}
+                >
+                  #{{ c['id'] }} · {{ c['farmer_name'] or '—' }} · {{ c['field_officer_name'] or '—' }}
+                  {% if c['contract_date'] %} ({{ c['contract_date'] }}){% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Type</label>
+            <select class="form-select" name="tx_type" required>
+              {% set types = tx_types or ['payment', 'advance', 'repayment'] %}
+              {% for t in types %}
+                <option value="{{ t }}" {% if transaction and transaction.get('tx_type', 'payment') == t %}selected{% endif %}>
+                  {{ t|capitalize }}
+                </option>
+              {% endfor %}
+            </select>
+            <div class="form-text">
+              Use <span class="fw-semibold">Advance</span> for loans/inputs advances to farmers, and <span class="fw-semibold">Repayment</span> when they pay back.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Amount</label>
+            <input
+              class="form-control"
+              name="amount"
+              inputmode="decimal"
+              required
+              value="{{ transaction['amount'] if transaction and transaction.get('amount') is not none else '' }}"
+              placeholder="e.g. 1500"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Transaction date</label>
+            <input
+              type="date"
+              class="form-control"
+              name="transaction_date"
+              value="{{ transaction['transaction_date'] if transaction and transaction.get('transaction_date') else '' }}"
+            />
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="4">{{ transaction['description'] if transaction and transaction.get('description') else '' }}</textarea>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

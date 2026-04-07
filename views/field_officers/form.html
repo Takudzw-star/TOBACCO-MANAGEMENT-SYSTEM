@@ -1,0 +1,42 @@
+{% extends "_layout.html" %}
+{% if officer %}
+  {% set page_title = "Edit Field Officer" %}
+{% else %}
+  {% set page_title = "New Field Officer" %}
+{% endif %}
+{% block title %}{{ page_title }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ page_title }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('field_officers.list_field_officers') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" name="name" required value="{{ officer['name'] if officer else '' }}" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Region</label>
+          <input class="form-control" name="region" value="{{ officer['region'] if officer else '' }}" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contact info</label>
+          <input
+            class="form-control"
+            name="contact_info"
+            value="{{ officer['contact_info'] if officer else '' }}"
+          />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

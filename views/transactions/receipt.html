@@ -1,0 +1,75 @@
+{% extends "_layout.html" %}
+{% block title %}Receipt {{ tx["reference"] or ("#" ~ tx["id"]) }} · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-print-none d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Transaction receipt</h1>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" type="button" onclick="window.print()">Print</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('transactions.list_transactions') }}">Back</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="text-muted small">Reference</div>
+          <div class="fs-4 fw-semibold">{{ tx["reference"] or ("TX-" ~ tx["id"]) }}</div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <div class="text-muted small">Date</div>
+          <div class="fs-5 fw-semibold">{{ tx["transaction_date"] or "" }}</div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="text-muted small">Farmer</div>
+          <div class="fw-semibold">{{ tx["farmer_name"] or "—" }}</div>
+          <div class="text-muted">{{ tx["farmer_contact_info"] or "" }}</div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-muted small">Field officer</div>
+          <div class="fw-semibold">{{ tx["field_officer_name"] or "—" }}</div>
+          <div class="text-muted">{{ tx["field_officer_region"] or "" }}</div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-muted small">Contract</div>
+          <div class="fw-semibold">#{{ tx["contract_id"] }}</div>
+          <div class="text-muted">{% if tx["contract_date"] %}Contract date: {{ tx["contract_date"] }}{% endif %}</div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-muted small">Amount</div>
+          <div class="fs-3 fw-semibold">{{ "%.2f"|format(tx["amount"] or 0) }}</div>
+        </div>
+        <div class="col-12">
+          <div class="text-muted small">Description</div>
+          <div style="white-space: pre-wrap">{{ tx["description"] or "" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      .navbar,
+      .btn,
+      .alert {
+        display: none !important;
+      }
+      main.container {
+        max-width: 100% !important;
+      }
+      .card {
+        border: none !important;
+      }
+      .card-body {
+        padding: 0 !important;
+      }
+    }
+  </style>
+{% endblock %}
+

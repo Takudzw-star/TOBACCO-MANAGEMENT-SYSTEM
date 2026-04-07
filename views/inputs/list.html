@@ -1,0 +1,69 @@
+{% extends "_layout.html" %}
+{% block title %}Inputs · TMS{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Inputs (Inventory Issued)</h1>
+    <a class="btn btn-primary" href="{{ url_for('inputs.create_input') }}">New Input</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Contract</th>
+            <th>Item</th>
+            <th style="width: 140px" class="text-end">Qty</th>
+            <th style="width: 160px" class="text-end">Total cost</th>
+            <th style="width: 140px">Date</th>
+            <th>Description</th>
+            <th style="width: 190px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in inputs %}
+            <tr>
+              <td>{{ i["id"] }}</td>
+              <td>
+                <span class="fw-semibold">#{{ i["contract_id"] }}</span>
+                {% if i["farmer_name"] %}<span class="text-muted">· {{ i["farmer_name"] }}</span>{% endif %}
+                {% if i["field_officer_name"] %}<span class="text-muted">· {{ i["field_officer_name"] }}</span>{% endif %}
+              </td>
+              <td class="fw-semibold">{{ i["item"] }}</td>
+              <td class="text-end">{{ "%.2f"|format(i["quantity"] or 0) }}{% if i["unit"] %} {{ i["unit"] }}{% endif %}</td>
+              <td class="text-end">
+                {% if i["total_cost"] is not none %}
+                  {{ "%.2f"|format(i["total_cost"]) }}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td>{{ i["issue_date"] or "" }}</td>
+              <td class="text-truncate" style="max-width: 420px">{{ i["description"] or "" }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('inputs.edit_input', input_id=i['id']) }}"
+                  >Edit</a
+                >
+                <form
+                  method="post"
+                  action="{{ url_for('inputs.delete_input', input_id=i['id']) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this input record?');"
+                >
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">No inputs recorded yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
