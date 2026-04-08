@@ -233,8 +233,9 @@ def initialize_database():
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
 
-    # Read schema from file
-    with open('database/schema.sql', 'r') as schema_file:
+    # Read schema from file using absolute path
+    schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema.sql")
+    with open(schema_path, 'r') as schema_file:
         schema = schema_file.read()
 
     # Execute schema
