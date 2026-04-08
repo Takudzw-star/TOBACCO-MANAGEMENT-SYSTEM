@@ -39,6 +39,13 @@ def create_app():
     app = Flask(__name__, template_folder="views", static_folder="static")
     app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev_secret_key_change_me")
 
+    try:
+        from database.setup_db import initialize_database
+        initialize_database()
+        print("Database checked/initialized inside app.py!")
+    except Exception as e:
+        print("Warning: Database initialization skipped or failed:", e)
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(farmers_bp)
     app.register_blueprint(field_officers_bp)
