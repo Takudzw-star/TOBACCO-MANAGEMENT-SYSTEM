@@ -4,43 +4,64 @@
 </div>
 
 <div class="list-group list-group-flush">
-  <a class="list-group-item list-group-item-action {% if path.startswith('/dashboards') %}active{% endif %}" href="{{ url_for('dashboards') }}">
+  <a class="list-group-item list-group-item-action {% if path.startswith('/dashboards') %}active{% endif %}"
+    href="{{ url_for('dashboards') }}">
     Dashboard
   </a>
 
   {% if role in ['admin', 'field_officer'] %}
-    <a class="list-group-item list-group-item-action {% if path.startswith('/farmers') %}active{% endif %}" href="{{ url_for('farmers.list_farmers') }}">Farmers</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/field-officers') %}active{% endif %}" href="{{ url_for('field_officers.list_field_officers') }}">Field Officers</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/contracts') %}active{% endif %}" href="{{ url_for('contracts.list_contracts') }}">Contracts</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/farmers') %}active{% endif %}"
+    href="{{ url_for('farmers.list_farmers') }}">Farmers</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/field-officers') %}active{% endif %}"
+    href="{{ url_for('field_officers.list_field_officers') }}">Field Officers</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/contracts') %}active{% endif %}"
+    href="{{ url_for('contracts.list_contracts') }}">Contracts</a>
   {% endif %}
 
   {% if role in ['admin', 'accountant', 'manager'] %}
-    <a class="list-group-item list-group-item-action {% if path.startswith('/transactions') %}active{% endif %}" href="{{ url_for('transactions.list_transactions') }}">Accounts</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/dashboards/finance') %}active{% endif %}" href="{{ url_for('finance_dashboard.finance_home') }}">Finance dashboard</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/loans') %}active{% endif %}" href="{{ url_for('loans.list_loans') }}">Loans</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/analytics') %}active{% endif %}" href="{{ url_for('analytics.inputs_vs_yield') }}">Analytics</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/reports') %}active{% endif %}" href="{{ url_for('reports.reports_home') }}">Reports</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/transactions') %}active{% endif %}"
+    href="{{ url_for('transactions.list_transactions') }}">Accounts</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/dashboards/finance') %}active{% endif %}"
+    href="{{ url_for('finance_dashboard.finance_home') }}">Finance dashboard</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/loans') %}active{% endif %}"
+    href="{{ url_for('loans.list_loans') }}">Loans</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/analytics') %}active{% endif %}"
+    href="{{ url_for('analytics.inputs_vs_yield') }}">Analytics</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/reports') %}active{% endif %}"
+    href="{{ url_for('reports.reports_home') }}">Reports</a>
   {% endif %}
 
   {% if role in ['admin', 'field_officer'] %}
-    <a class="list-group-item list-group-item-action {% if path.startswith('/inputs') %}active{% endif %}" href="{{ url_for('inputs.list_inputs') }}">Inputs</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/yields') %}active{% endif %}" href="{{ url_for('yields.list_yields') }}">Yields</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/visits') %}active{% endif %}" href="{{ url_for('officer_visits.list_visits') }}">Visits</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/reminders') %}active{% endif %}" href="{{ url_for('reminders.reminders_home') }}">Reminders</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/map') %}active{% endif %}" href="{{ url_for('map_view.farmers_map') }}">Map</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/inputs') %}active{% endif %}"
+    href="{{ url_for('inputs.list_inputs') }}">Inputs</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/yields') %}active{% endif %}"
+    href="{{ url_for('yields.list_yields') }}">Yields</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/visits') %}active{% endif %}"
+    href="{{ url_for('officer_visits.list_visits') }}">Visits</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/reminders') %}active{% endif %}"
+    href="{{ url_for('reminders.reminders_home') }}">Reminders</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/map') %}active{% endif %}"
+    href="{{ url_for('map_view.farmers_map') }}">Map</a>
   {% endif %}
 
   {% if role in ['admin', 'hr'] %}
-    <a class="list-group-item list-group-item-action {% if path.startswith('/employees') %}active{% endif %}" href="{{ url_for('employees.list_employees') }}">HR</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/employees') %}active{% endif %}"
+    href="{{ url_for('employees.list_employees') }}">HR</a>
   {% endif %}
 
   {% if role in ['admin'] %}
-    <a class="list-group-item list-group-item-action {% if path.startswith('/users') %}active{% endif %}" href="{{ url_for('users.list_users') }}">Admin</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/contract-templates') %}active{% endif %}" href="{{ url_for('contract_templates.list_templates') }}">Templates</a>
-    <a class="list-group-item list-group-item-action {% if path.startswith('/input-items') %}active{% endif %}" href="{{ url_for('input_items.list_items') }}">Input catalog</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/users') %}active{% endif %}"
+    href="{{ url_for('users.list_users') }}">Admin</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/contract-templates') %}active{% endif %}"
+    href="{{ url_for('contract_templates.list_templates') }}">Templates</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/input-items') %}active{% endif %}"
+    href="{{ url_for('input_items.list_items') }}">Input catalog</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/settings/branding') %}active{% endif %}"
+    href="{{ url_for('settings.branding') }}">Branding</a>
   {% endif %}
 
-  <a class="list-group-item list-group-item-action {% if path.startswith('/search') %}active{% endif %}" href="{{ url_for('search.search_home') }}">Search</a>
-  <a class="list-group-item list-group-item-action {% if path.startswith('/auth/change-password') %}active{% endif %}" href="{{ url_for('auth.change_password') }}">Settings</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/search') %}active{% endif %}"
+    href="{{ url_for('search.search_home') }}">Search</a>
+  <a class="list-group-item list-group-item-action {% if path.startswith('/auth/change-password') %}active{% endif %}"
+    href="{{ url_for('auth.change_password') }}">Settings</a>
 </div>
-

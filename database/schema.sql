@@ -196,3 +196,9 @@ CREATE TABLE IF NOT EXISTS yields (
     notes TEXT,
     FOREIGN KEY (contract_id) REFERENCES contracts(id)
 );
+
+-- System settings (branding, config)
+CREATE TABLE IF NOT EXISTS system_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT
+);

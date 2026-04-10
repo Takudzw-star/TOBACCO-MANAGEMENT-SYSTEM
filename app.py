@@ -31,6 +31,7 @@ from controllers.loans import bp as loans_bp
 from controllers.finance_dashboard import bp as finance_dashboard_bp
 from controllers.search import bp as search_bp
 from controllers.offline_drafts import bp as offline_drafts_bp
+from controllers.settings import bp as settings_bp, get_setting
 
 
 def create_app():
@@ -66,6 +67,18 @@ def create_app():
     app.register_blueprint(finance_dashboard_bp)
     app.register_blueprint(search_bp)
     app.register_blueprint(offline_drafts_bp)
+    app.register_blueprint(settings_bp)
+
+    @app.context_processor
+    def inject_branding():
+        return {
+            "branding": {
+                "system_name": get_setting("system_name", "TMS"),
+                "logo": get_setting("logo"),
+                "dashboard_banner": get_setting("dashboard_banner"),
+                "login_bg": get_setting("login_bg"),
+            }
+        }
 
     @app.get("/")
     def home():

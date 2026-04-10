@@ -200,6 +200,17 @@ def _ensure_yields_table(cursor):
     )
 
 
+def _ensure_settings_table(cursor):
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS system_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        );
+        """
+    )
+
+
 def _ensure_default_admin(cursor):
     # Create a default admin user if none exist.
     # username: admin
@@ -250,6 +261,7 @@ def initialize_database():
     _ensure_yields_table(cursor)
     _ensure_farmer_crops_table(cursor)
     _ensure_loan_tables(cursor)
+    _ensure_settings_table(cursor)
     _ensure_default_admin(cursor)
     connection.commit()
     connection.close()

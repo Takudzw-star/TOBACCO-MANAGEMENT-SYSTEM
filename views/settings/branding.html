@@ -1,0 +1,89 @@
+{% extends "_layout.html" %}
+{% block title %}Branding Settings · TMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h1 class="h4 mb-0">System Branding</h1>
+                <p class="text-muted mb-0 small">Customize your system labels and images.</p>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">System Name</label>
+                        <input type="text" name="system_name" class="form-control" value="{{ settings.system_name }}"
+                            placeholder="e.g. Tobacco Management System">
+                        <div class="form-text">This will be displayed in the navbar and page titles.</div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">System Logo</label>
+                            {% if settings.logo %}
+                            <div class="mb-2">
+                                <img src="{{ url_for('static', filename=settings.logo) }}" class="img-thumbnail"
+                                    style="height: 60px;">
+                            </div>
+                            {% endif %}
+                            <input type="file" name="logo" class="form-control">
+                            <div class="form-text">Recommended: Square PNG with transparent background.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Login Background</label>
+                            {% if settings.login_bg %}
+                            <div class="mb-2">
+                                <img src="{{ url_for('static', filename=settings.login_bg) }}" class="img-thumbnail"
+                                    style="height: 60px;">
+                            </div>
+                            {% endif %}
+                            <input type="file" name="login_bg" class="form-control">
+                            <div class="form-text">High resolution image (1920x1080).</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Dashboard Banner</label>
+                            {% if settings.dashboard_banner %}
+                            <div class="mb-2">
+                                <img src="{{ url_for('static', filename=settings.dashboard_banner) }}"
+                                    class="img-thumbnail w-100" style="max-height: 100px; object-fit: cover;">
+                            </div>
+                            {% endif %}
+                            <input type="file" name="dashboard_banner" class="form-control">
+                            <div class="form-text">Wide landscape image for the top of the dashboard.</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary">Save Branding Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Preview Current Branding</h5>
+                <p class="small text-muted">This is how your current assets look.</p>
+
+                <div class="mb-3">
+                    <label class="small fw-bold text-uppercase text-muted">Logo + Name</label>
+                    <div class="d-flex align-items-center p-2 bg-dark rounded text-white mt-1">
+                        {% if settings.logo %}
+                        <img src="{{ url_for('static', filename=settings.logo) }}"
+                            style="height: 24px; border-radius: 4px; margin-right: 8px;">
+                        {% endif %}
+                        <span class="fw-bold">{{ settings.system_name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
