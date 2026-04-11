@@ -1,4 +1,4 @@
-{% extends "_layout.html" %}
+{% extends "_admin_layout.html" %}
 {% block title %}Dashboards · TMS{% endblock %}
 
 {% block content %}
@@ -340,5 +340,64 @@
       });
     }
   </script>
-{% endblock %}
 
+  <style>
+    /* Dark Theme Core Adjustments for Dashboard Elements */
+    .card {
+      background-color: var(--card-bg) !important;
+      border: 1px solid var(--border-color) !important;
+      color: #f8fafc !important;
+    }
+    .card-body, .list-group-item {
+      background-color: transparent !important;
+      color: inherit;
+    }
+    .list-group-flush>.list-group-item {
+      border-color: var(--border-color);
+    }
+    .text-dark {
+      color: #f8fafc !important;
+    }
+    .text-bg-light {
+      background-color: #1e293b !important;
+      color: #e2e8f0 !important;
+      border-color: #334155 !important;
+    }
+    .btn-light {
+      background-color: #334155;
+      border-color: #334155;
+      color: #f8fafc;
+    }
+    .btn-light:hover {
+      background-color: #475569;
+      color: #ffffff;
+    }
+    .btn-outline-secondary {
+      color: #94a3b8;
+      border-color: #475569;
+    }
+    .btn-outline-secondary:hover {
+      background-color: #334155;
+      color: #ffffff;
+    }
+    .form-select, .form-control {
+      background-color: var(--bg-dark);
+      border-color: var(--border-color);
+      color: #f8fafc;
+    }
+    .form-select:focus, .form-control:focus {
+      background-color: var(--bg-dark);
+      color: #f8fafc;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 .25rem rgba(37,99,235,.25);
+    }
+    .text-muted {
+      color: #94a3b8 !important;
+    }
+    
+    /* Chart rendering fixes for dark mode */
+    canvas {
+      filter: invert(0.9) hue-rotate(180deg);
+    }
+  </style>
+{% endblock %}

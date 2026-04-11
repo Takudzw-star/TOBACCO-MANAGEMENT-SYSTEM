@@ -1,4 +1,4 @@
-{% extends "_layout.html" %}
+{% extends "_admin_layout.html" %}
 {% block title %}Users · Admin · TMS{% endblock %}
 
 {% block content %}
@@ -54,5 +54,14 @@
       </table>
     </div>
   </div>
+  <style>
+    .card { background-color: var(--card-bg) !important; border-color: var(--border-color) !important; color: #f8fafc !important; }
+    .table { color: #f8fafc; }
+    .table-striped>tbody>tr:nth-of-type(odd)>* { color: #f8fafc; }
+    .table>thead { border-bottom: 1px solid var(--border-color); }
+    th, td { border-bottom: 1px solid var(--border-color) !important; background-color: transparent !important; }
+    .btn-outline-secondary { color: #94a3b8; border-color: #475569; }
+    .btn-outline-secondary:hover { background-color: #334155; color: #ffffff; }
+    .text-muted { color: #94a3b8 !important; }
+  </style>
 {% endblock %}
-
