@@ -2,4 +2,3 @@ Flask
 waitress
 python-dotenv
 gunicorn
-whitenoise

@@ -4,7 +4,6 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
-from whitenoise import WhiteNoise
 
 from models.db import get_connection
 
@@ -39,7 +38,6 @@ def create_app():
     load_dotenv()
     
     app = Flask(__name__, template_folder="views", static_folder="static")
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/', prefix='static/')
     app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev_secret_key_change_me")
 
     from database.setup_db import initialize_database
