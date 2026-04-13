@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB"/>
+      <stop offset="55%" style="stop-color:#B8E0F5"/>
+      <stop offset="100%" style="stop-color:#E8F4E8"/>
+    </linearGradient>
+    <linearGradient id="field" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5D8A3E"/>
+      <stop offset="40%" style="stop-color:#4A7A32"/>
+      <stop offset="100%" style="stop-color:#2D5016"/>
+    </linearGradient>
+    <linearGradient id="vignette" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" style="stop-color:#000;stop-opacity:0"/>
+      <stop offset="100%" style="stop-color:#1a2e0f;stop-opacity:0.22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#sky)"/>
+  <circle cx="980" cy="70" r="38" fill="#FFD54F" opacity="0.95"/>
+  <circle cx="980" cy="70" r="48" fill="#FFF59D" opacity="0.35"/>
+  <!-- Distant hills -->
+  <path d="M0 220 Q200 160 400 200 T800 190 T1200 210 V400 H0 Z" fill="#7CB342" opacity="0.5"/>
+  <path d="M0 250 Q300 200 600 235 T1200 240 V400 H0 Z" fill="url(#field)"/>
+  <!-- Furrows -->
+  <g opacity="0.35" fill="none" stroke="#1B3D0F" stroke-width="1">
+    <path d="M0 280 Q600 260 1200 285"/>
+    <path d="M0 300 Q600 280 1200 305"/>
+    <path d="M0 320 Q600 300 1200 325"/>
+    <path d="M0 340 Q600 320 1200 345"/>
+  </g>
+  <!-- Tobacco plants (stylized rows) -->
+  <g fill="#2E4A1C">
+    <g transform="translate(80 200)">
+      <rect x="18" y="40" width="4" height="80" rx="1"/>
+      <ellipse cx="12" cy="55" rx="14" ry="8" transform="rotate(-35 12 55)" fill="#3D6B28"/>
+      <ellipse cx="28" cy="50" rx="14" ry="8" transform="rotate(35 28 50)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="35" rx="12" ry="22" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(200 185)">
+      <rect x="18" y="50" width="4" height="85" rx="1"/>
+      <ellipse cx="10" cy="60" rx="15" ry="9" transform="rotate(-40 10 60)" fill="#3D6B28"/>
+      <ellipse cx="30" cy="55" rx="15" ry="9" transform="rotate(40 30 55)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="38" rx="13" ry="24" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(340 195)">
+      <rect x="18" y="45" width="4" height="82" rx="1"/>
+      <ellipse cx="12" cy="58" rx="14" ry="8" transform="rotate(-35 12 58)" fill="#3D6B28"/>
+      <ellipse cx="28" cy="52" rx="14" ry="8" transform="rotate(35 28 52)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="36" rx="12" ry="22" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(480 180)">
+      <rect x="18" y="55" width="4" height="88" rx="1"/>
+      <ellipse cx="10" cy="65" rx="16" ry="9" transform="rotate(-42 10 65)" fill="#3D6B28"/>
+      <ellipse cx="32" cy="58" rx="16" ry="9" transform="rotate(42 32 58)" fill="#4A7A32"/>
+      <ellipse cx="21" cy="40" rx="14" ry="26" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(620 192)">
+      <rect x="18" y="48" width="4" height="84" rx="1"/>
+      <ellipse cx="12" cy="56" rx="14" ry="8" transform="rotate(-35 12 56)" fill="#3D6B28"/>
+      <ellipse cx="28" cy="51" rx="14" ry="8" transform="rotate(35 28 51)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="35" rx="12" ry="22" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(760 188)">
+      <rect x="18" y="52" width="4" height="86" rx="1"/>
+      <ellipse cx="11" cy="62" rx="15" ry="9" transform="rotate(-38 11 62)" fill="#3D6B28"/>
+      <ellipse cx="29" cy="56" rx="15" ry="9" transform="rotate(38 29 56)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="38" rx="13" ry="24" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(900 198)">
+      <rect x="18" y="44" width="4" height="80" rx="1"/>
+      <ellipse cx="12" cy="54" rx="14" ry="8" transform="rotate(-35 12 54)" fill="#3D6B28"/>
+      <ellipse cx="28" cy="49" rx="14" ry="8" transform="rotate(35 28 49)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="34" rx="12" ry="21" fill="#5D8A3E"/>
+    </g>
+    <g transform="translate(1040 190)">
+      <rect x="18" y="50" width="4" height="84" rx="1"/>
+      <ellipse cx="10" cy="60" rx="15" ry="9" transform="rotate(-40 10 60)" fill="#3D6B28"/>
+      <ellipse cx="30" cy="54" rx="15" ry="9" transform="rotate(40 30 54)" fill="#4A7A32"/>
+      <ellipse cx="20" cy="37" rx="13" ry="23" fill="#5D8A3E"/>
+    </g>
+  </g>
+  <rect width="1200" height="400" fill="url(#vignette)"/>
+</svg>
