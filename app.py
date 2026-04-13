@@ -71,14 +71,25 @@ def create_app():
 
     _DEFAULT_BANNER = "images/tobacco-field.svg"
 
+    def _resolve_static_image(setting_key: str, default_path: str):
+        value = (get_setting(setting_key) or "").strip()
+        if not value:
+            return default_path
+
+        candidate = os.path.normpath(os.path.join(app.static_folder, value))
+        static_root = os.path.normpath(app.static_folder)
+        if candidate.startswith(static_root) and os.path.exists(candidate):
+            return value
+        return default_path
+
     @app.context_processor
     def inject_branding():
         return {
             "branding": {
                 "system_name": get_setting("system_name", "Tobacco Management System"),
-                "logo": get_setting("logo"),
-                "dashboard_banner": get_setting("dashboard_banner") or _DEFAULT_BANNER,
-                "login_bg": get_setting("login_bg") or _DEFAULT_BANNER,
+                "logo": _resolve_static_image("logo", "images/tobacco-field.svg"),
+                "dashboard_banner": _resolve_static_image("dashboard_banner", _DEFAULT_BANNER),
+                "login_bg": _resolve_static_image("login_bg", _DEFAULT_BANNER),
             }
         }
 

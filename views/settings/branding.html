@@ -1,164 +1,67 @@
-{% extends "_admin_layout.html" %}
-{% block title %}System Settings · SmartAttend Admin{% endblock %}
+{% extends "_layout.html" %}
+{% block title %}System Settings · TMS{% endblock %}
 
 {% block content %}
-<div class="settings-container">
-    <div class="settings-header mb-4">
-        <h1 class="header-title">System Settings</h1>
-        <p class="header-subtitle">Configure global application preferences.</p>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h3 mb-0">System Settings</h1>
+      <div class="text-muted small">Configure global application preferences.</div>
+    </div>
+  </div>
+
+  <form method="post" class="vstack gap-3">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="h5 mb-3">General Configuration</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Institution Name</label>
+            <input type="text" name="institution_name" class="form-control" value="{{ settings.institution_name }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Academic Year</label>
+            <input type="text" name="academic_year" class="form-control" value="{{ settings.academic_year }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Current Semester</label>
+            <select name="current_semester" class="form-select">
+              <option value="Semester 1" {% if settings.current_semester == "Semester 1" %}selected{% endif %}>Semester 1</option>
+              <option value="Semester 2" {% if settings.current_semester == "Semester 2" %}selected{% endif %}>Semester 2</option>
+              <option value="Summer" {% if settings.current_semester == "Summer" %}selected{% endif %}>Summer</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Timezone</label>
+            <select name="timezone" class="form-select">
+              <option value="Africa/Harare (GMT+2)" {% if settings.timezone == "Africa/Harare (GMT+2)" %}selected{% endif %}>Africa/Harare (GMT+2)</option>
+              <option value="Africa/Johannesburg (GMT+2)" {% if settings.timezone == "Africa/Johannesburg (GMT+2)" %}selected{% endif %}>Africa/Johannesburg (GMT+2)</option>
+              <option value="UTC" {% if settings.timezone == "UTC" %}selected{% endif %}>UTC</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <form method="post">
-        <!-- General Configuration Card -->
-        <div class="settings-card mb-4">
-            <h5 class="card-title">General Configuration</h5>
-            <div class="row g-4 mt-1">
-                <div class="col-md-6">
-                    <label class="form-label text-muted">Institution Name</label>
-                    <input type="text" name="institution_name" class="form-control custom-input" value="{{ settings.institution_name }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label text-muted">Academic Year</label>
-                    <input type="text" name="academic_year" class="form-control custom-input" value="{{ settings.academic_year }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label text-muted">Current Semester</label>
-                    <select name="current_semester" class="form-select custom-input">
-                        <option value="Semester 1" {% if settings.current_semester == "Semester 1" %}selected{% endif %}>Semester 1</option>
-                        <option value="Semester 2" {% if settings.current_semester == "Semester 2" %}selected{% endif %}>Semester 2</option>
-                        <option value="Summer" {% if settings.current_semester == "Summer" %}selected{% endif %}>Summer</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label text-muted">Timezone</label>
-                    <select name="timezone" class="form-select custom-input">
-                        <option value="Africa/Harare (GMT+2)" {% if settings.timezone == "Africa/Harare (GMT+2)" %}selected{% endif %}>Africa/Harare (GMT+2)</option>
-                        <option value="Africa/Johannesburg (GMT+2)" {% if settings.timezone == "Africa/Johannesburg (GMT+2)" %}selected{% endif %}>Africa/Johannesburg (GMT+2)</option>
-                        <option value="UTC" {% if settings.timezone == "UTC" %}selected{% endif %}>UTC</option>
-                    </select>
-                </div>
-            </div>
+    <div class="card">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Security & ML Settings</h2>
+
+        <div class="form-check form-switch mb-2">
+          <input class="form-check-input" type="checkbox" name="ml_detection" value="true" {% if settings.ml_detection %}checked{% endif %} />
+          <label class="form-check-label fw-semibold">Anti-Proxy ML Detection</label>
+          <div class="text-muted small">Use machine learning to detect suspicious attendance patterns.</div>
         </div>
 
-        <!-- Security & ML Settings Card -->
-        <div class="settings-card mb-4">
-            <h5 class="card-title mb-4">Security & ML Settings</h5>
-            
-            <div class="d-flex justify-content-between align-items-center toggle-row mb-3">
-                <div>
-                    <div class="fw-semibold text-white">Anti-Proxy ML Detection</div>
-                    <div class="text-muted small mt-1">Use machine learning to detect suspicious attendance patterns.</div>
-                </div>
-                <div class="form-check form-switch custom-switch">
-                    <input class="form-check-input" type="checkbox" name="ml_detection" value="true" {% if settings.ml_detection %}checked{% endif %}>
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center toggle-row">
-                <div>
-                    <div class="fw-semibold text-white">Require Location for QR Scan</div>
-                    <div class="text-muted small mt-1">Students must be within 50m of the lecture venue.</div>
-                </div>
-                <div class="form-check form-switch custom-switch">
-                    <input class="form-check-input" type="checkbox" name="location_qr" value="true" {% if settings.location_qr %}checked{% endif %}>
-                </div>
-            </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" name="location_qr" value="true" {% if settings.location_qr %}checked{% endif %} />
+          <label class="form-check-label fw-semibold">Require Location for QR Scan</label>
+          <div class="text-muted small">Users must be within approved geofence for QR scan.</div>
         </div>
+      </div>
+    </div>
 
-        <div>
-            <button type="submit" class="btn btn-primary custom-btn">Save Settings</button>
-        </div>
-    </form>
-</div>
-
-<style>
-.settings-container {
-    color: #f8fafc;
-    min-height: 80vh;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-.header-title {
-    font-weight: 700;
-    font-size: 1.75rem;
-    color: #ffffff;
-    margin-bottom: 0.25rem;
-}
-.header-subtitle {
-    color: #94a3b8;
-    font-size: 0.95rem;
-}
-.settings-card {
-    background-color: var(--card-bg); /* #111827 */
-    border: 1px solid var(--border-color); /* #1e293b */
-    border-radius: 0.5rem;
-    padding: 1.5rem 1.75rem;
-}
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #ffffff;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-}
-.form-label.text-muted {
-    color: #94a3b8 !important;
-    font-size: 0.85rem;
-    margin-bottom: 0.4rem;
-}
-.custom-input {
-    background-color: var(--bg-dark); /* #0B1120 */
-    border: 1px solid var(--border-color);
-    color: #f8fafc;
-    border-radius: 0.375rem;
-    padding: 0.6rem 1rem;
-}
-.custom-input:focus {
-    background-color: var(--bg-dark);
-    border-color: var(--primary-blue);
-    color: #f8fafc;
-    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
-}
-.custom-input option {
-    background-color: var(--bg-dark);
-    color: #f8fafc;
-}
-
-.toggle-row {
-    background-color: var(--bg-dark);
-    padding: 1.1rem 1.25rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-color);
-}
-
-/* Custom Toggle Switch Colors */
-.custom-switch .form-check-input {
-    width: 2.75rem;
-    height: 1.5rem;
-    margin-top: 0.25rem;
-    background-color: #334155;
-    border-color: transparent;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
-}
-.custom-switch .form-check-input:checked {
-    background-color: var(--primary-blue);
-    border-color: var(--primary-blue);
-}
-.custom-switch .form-check-input:focus {
-    box-shadow: none;
-    border-color: transparent;
-}
-
-.custom-btn {
-    background-color: var(--primary-blue);
-    border-color: var(--primary-blue);
-    padding: 0.6rem 1.5rem;
-    font-weight: 500;
-    border-radius: 0.5rem;
-}
-.custom-btn:hover {
-    background-color: #1d4ed8;
-    border-color: #1d4ed8;
-}
-</style>
+    <div>
+      <button type="submit" class="btn btn-primary">Save Settings</button>
+    </div>
+  </form>
 {% endblock %}
