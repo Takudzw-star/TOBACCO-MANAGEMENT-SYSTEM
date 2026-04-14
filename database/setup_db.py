@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 
 
 def _ensure_user_columns(cursor):
@@ -241,6 +242,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models.db import DB_PATH
 
 def initialize_database():
+    db_file = Path(DB_PATH)
+    db_file.parent.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
 
