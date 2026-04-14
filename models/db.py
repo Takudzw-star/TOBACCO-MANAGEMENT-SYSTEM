@@ -3,7 +3,11 @@ import os
 from pathlib import Path
 
 default_db_path = Path(__file__).resolve().parents[1] / "tobacco_management.db"
-DB_PATH = os.environ.get("DB_PATH", str(default_db_path))
+render_db_path = "/var/data/tobacco_management.db"
+DB_PATH = os.environ.get(
+    "DB_PATH",
+    render_db_path if os.environ.get("RENDER") else str(default_db_path),
+)
 
 
 def get_connection():
