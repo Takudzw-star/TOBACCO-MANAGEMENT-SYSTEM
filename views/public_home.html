@@ -4,11 +4,6 @@
 {% block canonical_url %}{{ url_for('home', _external=True) }}{% endblock %}
 {% block og_title %}Tobacco Management System{% endblock %}
 {% block og_description %}Manage tobacco contract farming operations, finance, and field performance with real-time dashboards and alerts.{% endblock %}
-{% block extra_head %}
-  {{ super() }}
-  <meta name="google-site-verification" content="tvtYF2p_oZnrqU_7aLiDyO9-BQMJlPPx3xU7ZIT-sWc" />
-{% endblock %}
-
 {% block content %}
   <section class="dashboard-banner mb-4">
     <div class="dashboard-banner-overlay"></div>
