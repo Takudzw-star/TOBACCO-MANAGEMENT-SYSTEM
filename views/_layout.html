@@ -10,14 +10,27 @@
     :root {
       --tms-topbar-h: 56px;
       --tms-sidebar-w: 260px;
+      --tms-photo: url('{{ url_for("static", filename="images/tobacco-field-photo.png") }}');
     }
 
     .tms-topbar {
       height: var(--tms-topbar-h);
+      background-image:
+        linear-gradient(rgba(9, 35, 20, 0.78), rgba(9, 35, 20, 0.78)),
+        var(--tms-photo) !important;
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .tms-sidebar {
       width: var(--tms-sidebar-w);
+      background-image:
+        linear-gradient(rgba(9, 35, 20, 0.86), rgba(9, 35, 20, 0.86)),
+        var(--tms-photo);
+      background-size: cover;
+      background-position: center;
+      color: #fff;
     }
 
     @media (max-width: 991.98px) {
@@ -30,9 +43,26 @@
       padding-top: 0.85rem;
       padding-bottom: 0.85rem;
     }
+    .tms-sidebar .list-group-item {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.92);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    .tms-sidebar .list-group-item:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+    .tms-sidebar .list-group-item.active {
+      background: rgba(64, 145, 108, 0.82);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .tms-sidebar .text-muted {
+      color: rgba(235, 246, 240, 0.78) !important;
+    }
 
     .login-bg {
-      background-image: url('{{ url_for("static", filename=branding.login_bg or "images/tobacco-field.svg") }}');
+      background-image: url('{{ url_for("static", filename="images/tobacco-field-photo.png") }}');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -54,7 +84,7 @@
 
     .dashboard-banner {
       height: 200px;
-      background-image: url('{{ url_for("static", filename=branding.dashboard_banner or "images/tobacco-field.svg") }}');
+      background-image: url('{{ url_for("static", filename="images/tobacco-field-photo.png") }}');
       background-size: cover;
       background-position: center 30%;
       border-radius: 0.5rem;
@@ -147,12 +177,12 @@
     <div class="row g-0">
       {% if session.get('user_id') %}
       {# Desktop sidebar #}
-      <aside class="d-none d-lg-block col-lg-auto border-end bg-white tms-sidebar">
+      <aside class="d-none d-lg-block col-lg-auto border-end tms-sidebar">
         {% include "_sidebar.html" %}
       </aside>
 
       {# Mobile offcanvas sidebar #}
-      <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarMenu">
+      <div class="offcanvas offcanvas-start d-lg-none tms-sidebar" tabindex="-1" id="sidebarMenu">
         <div class="offcanvas-header border-bottom">
           <div>
             <div class="fw-semibold">Menu</div>
@@ -160,7 +190,7 @@
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-        <div class="offcanvas-body p-0 bg-white">
+        <div class="offcanvas-body p-0">
           {% include "_sidebar.html" %}
         </div>
       </div>
