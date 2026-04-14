@@ -3,7 +3,7 @@ from datetime import date, timedelta
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, Response, redirect, render_template, request, url_for
 
 from models.db import get_connection
 
@@ -95,7 +95,42 @@ def create_app():
 
     @app.get("/")
     def home():
-        return redirect(url_for("dashboards"))
+        return render_template("public_home.html")
+
+    @app.get("/robots.txt")
+    def robots():
+        body = "\n".join(
+            [
+                "User-agent: *",
+                "Allow: /",
+                "Disallow: /dashboards",
+                "Disallow: /auth/change-password",
+                "Disallow: /users",
+                "Sitemap: " + url_for("sitemap", _external=True),
+                "",
+            ]
+        )
+        return Response(body, mimetype="text/plain")
+
+    @app.get("/sitemap.xml")
+    def sitemap():
+        pages = [
+            {"loc": url_for("home", _external=True), "priority": "1.0", "changefreq": "weekly"},
+            {"loc": url_for("auth.login", _external=True), "priority": "0.6", "changefreq": "monthly"},
+        ]
+        xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+        for p in pages:
+            xml.extend(
+                [
+                    "<url>",
+                    f"<loc>{p['loc']}</loc>",
+                    f"<changefreq>{p['changefreq']}</changefreq>",
+                    f"<priority>{p['priority']}</priority>",
+                    "</url>",
+                ]
+            )
+        xml.append("</urlset>")
+        return Response("\n".join(xml), mimetype="application/xml")
 
     @app.get("/dashboards")
     @login_required

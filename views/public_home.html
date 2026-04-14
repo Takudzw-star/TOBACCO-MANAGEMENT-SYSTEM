@@ -1,0 +1,70 @@
+{% extends "_layout.html" %}
+{% block title %}Tobacco Management System | Contract Farming Platform{% endblock %}
+{% block meta_description %}Tobacco Management System helps agribusiness teams manage farmers, contracts, field officer visits, payments, loans, inputs, and production analytics in one platform.{% endblock %}
+{% block canonical_url %}{{ url_for('home', _external=True) }}{% endblock %}
+{% block og_title %}Tobacco Management System{% endblock %}
+{% block og_description %}Manage tobacco contract farming operations, finance, and field performance with real-time dashboards and alerts.{% endblock %}
+
+{% block content %}
+  <section class="dashboard-banner mb-4">
+    <div class="dashboard-banner-overlay"></div>
+    <div class="dashboard-banner-content">
+      <h1 class="h2 text-white fw-bold mb-2">Tobacco Management System</h1>
+      <p class="text-white mb-3" style="max-width: 680px;">
+        A complete digital platform for tobacco contract farming:
+        farmer records, contracts, field operations, accounts, reminders, and analytics.
+      </p>
+      <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-light" href="{{ url_for('auth.login') }}">Login</a>
+        <a class="btn btn-outline-light" href="{{ url_for('auth.login') }}">Request Demo Access</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="card mb-3">
+    <div class="card-body">
+      <h2 class="h4 mb-3">Why this Tobacco Management System</h2>
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-4">
+          <div class="border rounded p-3 h-100">
+            <h3 class="h6">Farmer & Contract Management</h3>
+            <p class="text-muted mb-0 small">Register farmers, manage contract lifecycle, and track status from draft to completion.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="border rounded p-3 h-100">
+            <h3 class="h6">Accounts & Loan Tracking</h3>
+            <p class="text-muted mb-0 small">Record payments, advances, repayments, and monitor finance KPIs with role-based dashboards.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="border rounded p-3 h-100">
+            <h3 class="h6">Field Operations & Analytics</h3>
+            <p class="text-muted mb-0 small">Track visits, inputs, yields, reminders, and performance insights by farmer and region.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-body">
+      <h2 class="h5 mb-2">Search visibility note</h2>
+      <p class="text-muted mb-0">
+        This public page is optimized for search engines. To appear on Google faster, submit
+        <code>{{ url_for('sitemap', _external=True) }}</code> in Google Search Console.
+      </p>
+    </div>
+  </section>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Tobacco Management System",
+      "url": "{{ url_for('home', _external=True) }}",
+      "description": "Tobacco contract farming platform for farmer management, contracts, finance, and analytics."
+    }
+  </script>
+{% endblock %}
+
