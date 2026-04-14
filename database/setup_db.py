@@ -239,12 +239,12 @@ def _ensure_default_admin(cursor):
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models.db import DB_PATH
+from models.db import get_db_path
 
 def initialize_database():
-    db_file = Path(DB_PATH)
+    db_file = Path(get_db_path())
     db_file.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(DB_PATH)
+    connection = sqlite3.connect(str(db_file))
     cursor = connection.cursor()
 
     # Read schema from file using absolute path
