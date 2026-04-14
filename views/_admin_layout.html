@@ -212,15 +212,72 @@
         <a href="{{ url_for('dashboards') }}" class="nav-item {% if request.path == '/' or request.path.startswith('/dashboards') %}active{% endif %}">
           <i class="bi bi-activity"></i> System Overview
         </a>
-        <a href="#" class="nav-item">
-          <i class="bi bi-book"></i> Academic Setup
-        </a>
-        <a href="{{ url_for('users.list_users') }}" class="nav-item {% if request.path.startswith('/users') %}active{% endif %}">
-          <i class="bi bi-people"></i> User Management
-        </a>
-        <a href="#" class="nav-item">
-          <i class="bi bi-database"></i> Data Integrity
-        </a>
+
+        {% set role = session.get('role') %}
+
+        {% if role in ['admin', 'field_officer'] %}
+          <a href="{{ url_for('farmers.list_farmers') }}" class="nav-item {% if request.path.startswith('/farmers') %}active{% endif %}">
+            <i class="bi bi-person-vcard"></i> Farmers
+          </a>
+          <a href="{{ url_for('field_officers.list_field_officers') }}" class="nav-item {% if request.path.startswith('/field-officers') %}active{% endif %}">
+            <i class="bi bi-people"></i> Field Officers
+          </a>
+          <a href="{{ url_for('contracts.list_contracts') }}" class="nav-item {% if request.path.startswith('/contracts') %}active{% endif %}">
+            <i class="bi bi-file-earmark-text"></i> Contracts
+          </a>
+          <a href="{{ url_for('inputs.list_inputs') }}" class="nav-item {% if request.path.startswith('/inputs') %}active{% endif %}">
+            <i class="bi bi-box-seam"></i> Inputs
+          </a>
+          <a href="{{ url_for('yields.list_yields') }}" class="nav-item {% if request.path.startswith('/yields') %}active{% endif %}">
+            <i class="bi bi-bar-chart"></i> Yields
+          </a>
+          <a href="{{ url_for('officer_visits.list_visits') }}" class="nav-item {% if request.path.startswith('/visits') %}active{% endif %}">
+            <i class="bi bi-calendar-check"></i> Visits
+          </a>
+          <a href="{{ url_for('reminders.reminders_home') }}" class="nav-item {% if request.path.startswith('/reminders') %}active{% endif %}">
+            <i class="bi bi-bell"></i> Reminders
+          </a>
+          <a href="{{ url_for('map_view.farmers_map') }}" class="nav-item {% if request.path.startswith('/map') %}active{% endif %}">
+            <i class="bi bi-geo-alt"></i> Map
+          </a>
+        {% endif %}
+
+        {% if role in ['admin', 'accountant', 'manager'] %}
+          <a href="{{ url_for('transactions.list_transactions') }}" class="nav-item {% if request.path.startswith('/transactions') %}active{% endif %}">
+            <i class="bi bi-cash-coin"></i> Accounts
+          </a>
+          <a href="{{ url_for('finance_dashboard.finance_home') }}" class="nav-item {% if request.path.startswith('/dashboards/finance') %}active{% endif %}">
+            <i class="bi bi-graph-up-arrow"></i> Finance Dashboard
+          </a>
+          <a href="{{ url_for('loans.list_loans') }}" class="nav-item {% if request.path.startswith('/loans') %}active{% endif %}">
+            <i class="bi bi-credit-card"></i> Loans
+          </a>
+          <a href="{{ url_for('analytics.inputs_vs_yield') }}" class="nav-item {% if request.path.startswith('/analytics') %}active{% endif %}">
+            <i class="bi bi-pie-chart"></i> Analytics
+          </a>
+          <a href="{{ url_for('reports.reports_home') }}" class="nav-item {% if request.path.startswith('/reports') %}active{% endif %}">
+            <i class="bi bi-file-earmark-bar-graph"></i> Reports
+          </a>
+        {% endif %}
+
+        {% if role in ['admin', 'hr'] %}
+          <a href="{{ url_for('employees.list_employees') }}" class="nav-item {% if request.path.startswith('/employees') %}active{% endif %}">
+            <i class="bi bi-person-badge"></i> HR
+          </a>
+        {% endif %}
+
+        {% if role in ['admin'] %}
+          <a href="{{ url_for('users.list_users') }}" class="nav-item {% if request.path.startswith('/users') %}active{% endif %}">
+            <i class="bi bi-person-gear"></i> User Management
+          </a>
+          <a href="{{ url_for('contract_templates.list_templates') }}" class="nav-item {% if request.path.startswith('/contract-templates') %}active{% endif %}">
+            <i class="bi bi-file-text"></i> Templates
+          </a>
+          <a href="{{ url_for('input_items.list_items') }}" class="nav-item {% if request.path.startswith('/input-items') %}active{% endif %}">
+            <i class="bi bi-boxes"></i> Input Catalog
+          </a>
+        {% endif %}
+
         <a href="{{ url_for('settings.branding') }}" class="nav-item {% if request.path.startswith('/settings') %}active{% endif %}">
           <i class="bi bi-gear"></i> System Settings
         </a>
@@ -232,8 +289,8 @@
             <i class="bi bi-shield-check"></i>
           </div>
           <div class="user-info">
-            <p class="user-name">Super Admin</p>
-            <p class="user-email">admin@smartatten...</p>
+            <p class="user-name">{{ session.get('username') or 'User' }}</p>
+            <p class="user-email">{{ session.get('role') or '' }}</p>
           </div>
           <a href="{{ url_for('auth.logout') }}" class="logout-btn">
              <i class="bi bi-box-arrow-right"></i>
