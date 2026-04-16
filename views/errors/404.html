@@ -1,0 +1,24 @@
+{% extends "_layout.html" %}
+{% block title %}Page not found · {{ branding.system_name }}{% endblock %}
+
+{% block content %}
+  <div class="container px-0">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="h3 mb-2">Page not found</h1>
+        <p class="text-muted mb-3">
+          The page you requested doesn’t exist or may have been moved.
+        </p>
+        <div class="d-flex gap-2 flex-wrap">
+          {% if session.get('user_id') %}
+            <a class="btn btn-primary" href="{{ url_for('dashboards') }}">Go to dashboard</a>
+          {% else %}
+            <a class="btn btn-primary" href="{{ url_for('home') }}">Go to home</a>
+          {% endif %}
+          <a class="btn btn-outline-secondary" href="{{ url_for('search.search_home') }}">Search</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

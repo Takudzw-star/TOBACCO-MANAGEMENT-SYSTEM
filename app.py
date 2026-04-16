@@ -38,7 +38,11 @@ def create_app():
     load_dotenv()
     
     app = Flask(__name__, template_folder="views", static_folder="static")
-    app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev_secret_key_change_me")
+    secret = os.environ.get("FLASK_SECRET_KEY")
+    if not secret:
+        secret = "dev_secret_key_change_me"
+        print("WARNING: FLASK_SECRET_KEY is not set. Using a development fallback secret.")
+    app.secret_key = secret
 
     from database.setup_db import initialize_database
     initialize_database()
@@ -99,6 +103,7 @@ def create_app():
 
     @app.get("/robots.txt")
     def robots():
+        base = request.url_root.rstrip("/")
         body = "\n".join(
             [
                 "User-agent: *",
@@ -106,7 +111,7 @@ def create_app():
                 "Disallow: /dashboards",
                 "Disallow: /auth/change-password",
                 "Disallow: /users",
-                "Sitemap: " + url_for("sitemap", _external=True),
+                f"Sitemap: {base}/sitemap.xml",
                 "",
             ]
         )
@@ -114,9 +119,9 @@ def create_app():
 
     @app.get("/sitemap.xml")
     def sitemap():
+        base = request.url_root.rstrip("/")
         pages = [
-            {"loc": url_for("home", _external=True), "priority": "1.0", "changefreq": "weekly"},
-            {"loc": url_for("auth.login", _external=True), "priority": "0.6", "changefreq": "monthly"},
+            {"loc": f"{base}{url_for('home')}", "priority": "1.0", "changefreq": "weekly"},
         ]
         xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
         for p in pages:
@@ -330,5 +335,24 @@ def create_app():
 
 app = create_app()
 
+@app.after_request
+def apply_security_headers(response: Response):
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+    return response
+
+
+@app.errorhandler(404)
+def not_found(_e):
+    return render_template("errors/404.html"), 404
+
+
+@app.errorhandler(500)
+def internal_error(_e):
+    return render_template("errors/500.html"), 500
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    app.run(debug=debug)
