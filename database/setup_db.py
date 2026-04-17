@@ -212,28 +212,29 @@ def _ensure_settings_table(cursor):
     )
 
 
-def _ensure_default_admin(cursor):
-    # Create a default admin user if none exist.
-    # username: admin
-    # password: admin123
+def _ensure_default_users(cursor):
+    # Create default users for all typical roles if none exist.
+    # password for all defaults: password123
     try:
         from werkzeug.security import generate_password_hash
     except Exception:
-        # If dependencies aren't installed yet, skip admin creation.
+        # If dependencies aren't installed yet, skip user creation.
         return
 
-    cursor.execute("SELECT COUNT(*) FROM users;")
-    count = cursor.fetchone()[0]
-    if count and int(count) > 0:
-        return
+    roles = ["admin", "hr", "accountant", "manager", "field_officer"]
+    default_pw = generate_password_hash("password123")
 
-    cursor.execute(
-        """
-        INSERT INTO users (username, password_hash, role, is_active, must_change_password)
-        VALUES (?, ?, ?, 1, 1)
-        """,
-        ("admin", generate_password_hash("admin123"), "admin"),
-    )
+    for role in roles:
+        cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?;", (role,))
+        count = cursor.fetchone()[0]
+        if count == 0:
+            cursor.execute(
+                """
+                INSERT INTO users (username, password_hash, role, is_active, must_change_password)
+                VALUES (?, ?, ?, 1, 1)
+                """,
+                (role, default_pw, role),
+            )
 
 
 import sys
@@ -265,7 +266,7 @@ def initialize_database():
     _ensure_farmer_crops_table(cursor)
     _ensure_loan_tables(cursor)
     _ensure_settings_table(cursor)
-    _ensure_default_admin(cursor)
+    _ensure_default_users(cursor)
     connection.commit()
     connection.close()
     print("Database initialized successfully.")

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#84cc16;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#166534;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <!-- Main leaf body -->
+    <path fill="url(#leafGrad)" d="M100 15 C100 15, 25 55, 35 135 C40 160, 65 180, 95 195 C100 200, 100 200, 105 195 C135 180, 160 160, 165 135 C175 55, 100 15, 100 15 Z" />
+    <!-- Leaf veins -->
+    <path stroke="#14532d" stroke-width="3" stroke-linecap="round" fill="none" d="M100 190 L100 35 M100 170 Q80 150 55 140 M100 145 Q80 120 60 110 M100 120 Q80 95 65 85 M100 95 Q85 75 75 60 M100 170 Q120 150 145 140 M100 145 Q120 120 140 110 M100 120 Q120 95 135 85 M100 95 Q115 75 125 60" opacity="0.6" />
+  </g>
+</svg>
