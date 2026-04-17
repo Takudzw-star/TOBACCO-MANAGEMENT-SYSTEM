@@ -91,7 +91,7 @@ def create_app():
         return {
             "branding": {
                 "system_name": get_setting("system_name", "Tobacco Management System"),
-                "logo": _resolve_static_image("logo", "images/tobacco-field.svg"),
+                "logo": _resolve_static_image("logo", "images/tobacco-leaf.svg"),
                 "dashboard_banner": _resolve_static_image("dashboard_banner", _DEFAULT_BANNER),
                 "login_bg": _resolve_static_image("login_bg", _DEFAULT_BANNER),
             }
