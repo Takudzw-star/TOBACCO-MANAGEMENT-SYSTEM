@@ -13,11 +13,7 @@
     </div>
     <div class="d-flex gap-2">
       <a class="btn btn-outline-secondary" href="{{ url_for('field_officers.list_field_officers') }}">Back</a>
-      <a
-        class="btn btn-outline-secondary"
-        href="{{ url_for('field_officers.edit_field_officer', officer_id=officer['id']) }}"
-        >Edit</a
-      >
+      <a class="btn btn-outline-secondary" href="{{ url_for('field_officers.edit_field_officer', officer_id=officer['id']) }}">Edit</a>
       <a class="btn btn-primary" href="{{ url_for('contracts.create_contract') }}">New Contract</a>
     </div>
   </div>
@@ -91,9 +87,7 @@
               <td class="text-end">{{ "%.2f"|format(c["total_paid"] or 0) }}</td>
               <td>{{ c["last_payment_date"] or "—" }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contracts.contract_detail', contract_id=c['contract_id']) }}"
-                  >View</a
-                >
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contracts.contract_detail', contract_id=c['contract_id']) }}">View</a>
               </td>
             </tr>
           {% else %}

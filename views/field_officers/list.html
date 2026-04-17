@@ -31,16 +31,8 @@
               <td>{{ o["region"] or "" }}</td>
               <td>{{ o["contact_info"] or "" }}</td>
               <td class="text-end">
-                <a
-                  class="btn btn-sm btn-outline-primary"
-                  href="{{ url_for('field_officers.field_officer_detail', officer_id=o['id']) }}"
-                  >View</a
-                >
-                <a
-                  class="btn btn-sm btn-outline-secondary"
-                  href="{{ url_for('field_officers.edit_field_officer', officer_id=o['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('field_officers.field_officer_detail', officer_id=o['id']) }}">View</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('field_officers.edit_field_officer', officer_id=o['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('field_officers.delete_field_officer', officer_id=o['id']) }}"

@@ -43,9 +43,7 @@
               <td>{{ i["issue_date"] or "" }}</td>
               <td class="text-truncate" style="max-width: 420px">{{ i["description"] or "" }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('inputs.edit_input', input_id=i['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('inputs.edit_input', input_id=i['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('inputs.delete_input', input_id=i['id']) }}"

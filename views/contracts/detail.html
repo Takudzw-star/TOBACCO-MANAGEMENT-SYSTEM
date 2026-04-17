@@ -27,16 +27,10 @@
     <div class="d-flex gap-2">
       <a class="btn btn-outline-secondary" href="{{ url_for('contracts.list_contracts') }}">Back</a>
       {% if contract["status"] in ["draft", "active"] %}
-        <a class="btn btn-outline-secondary" href="{{ url_for('contracts.edit_contract', contract_id=contract['id']) }}"
-          >Edit</a
-        >
+        <a class="btn btn-outline-secondary" href="{{ url_for('contracts.edit_contract', contract_id=contract['id']) }}">Edit</a>
       {% endif %}
       {% if contract["status"] == "active" %}
-        <a
-          class="btn btn-primary"
-          href="{{ url_for('transactions.create_transaction') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
-          >Add Transaction</a
-        >
+        <a class="btn btn-primary" href="{{ url_for('transactions.create_transaction') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Add Transaction</a>
       {% endif %}
     </div>
   </div>
@@ -59,12 +53,8 @@
           {% endif %}
         </form>
         <div class="ms-auto">
-          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_documents.list_documents', contract_id=contract['id']) }}"
-            >Documents</a
-          >
-          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_signatures.list_signatures', contract_id=contract['id']) }}"
-            >Signatures</a
-          >
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_documents.list_documents', contract_id=contract['id']) }}">Documents</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_signatures.list_signatures', contract_id=contract['id']) }}">Signatures</a>
         </div>
       </div>
     </div>
@@ -148,11 +138,7 @@
               <td>{{ t["transaction_date"] or "" }}</td>
               <td class="text-truncate" style="max-width: 520px">{{ t["description"] or "" }}</td>
               <td class="text-end" style="width: 190px">
-                <a
-                  class="btn btn-sm btn-outline-secondary"
-                  href="{{ url_for('transactions.edit_transaction', transaction_id=t['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('transactions.edit_transaction', transaction_id=t['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('transactions.delete_transaction', transaction_id=t['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
@@ -181,11 +167,7 @@
       <div class="text-muted small">
         Total: <span class="fw-semibold">{{ "%.2f"|format(total_yield_kg or 0) }}</span> kg
       </div>
-      <a
-        class="btn btn-sm btn-outline-primary"
-        href="{{ url_for('yields.create_yield') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
-        >Add Yield</a
-      >
+      <a class="btn btn-sm btn-outline-primary" href="{{ url_for('yields.create_yield') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Add Yield</a>
     </div>
   </div>
 
@@ -213,11 +195,7 @@
               <td>{{ y["delivery_date"] }}</td>
               <td class="text-truncate" style="max-width: 520px">{{ y["notes"] or "" }}</td>
               <td class="text-end">
-                <a
-                  class="btn btn-sm btn-outline-secondary"
-                  href="{{ url_for('yields.edit_yield', yield_id=y['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('yields.edit_yield', yield_id=y['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('yields.delete_yield', yield_id=y['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
@@ -240,11 +218,7 @@
 
   <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
     <h2 class="h5 mb-0">Inputs issued</h2>
-    <a
-      class="btn btn-sm btn-outline-primary"
-      href="{{ url_for('inputs.create_input') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
-      >Add Input</a
-    >
+    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('inputs.create_input') }}?contract_id={{ contract['id'] }}&return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Add Input</a>
   </div>
 
   <div class="card">
@@ -269,11 +243,7 @@
               <td>{{ i["issue_date"] or "" }}</td>
               <td class="text-truncate" style="max-width: 520px">{{ i["description"] or "" }}</td>
               <td class="text-end">
-                <a
-                  class="btn btn-sm btn-outline-secondary"
-                  href="{{ url_for('inputs.edit_input', input_id=i['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('inputs.edit_input', input_id=i['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('inputs.delete_input', input_id=i['id']) }}?return_to={{ url_for('contracts.contract_detail', contract_id=contract['id']) }}"

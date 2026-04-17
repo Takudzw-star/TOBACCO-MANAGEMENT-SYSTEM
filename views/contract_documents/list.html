@@ -61,9 +61,7 @@
               <td class="text-muted">{{ d["template_name"] or "" }}</td>
               <td class="text-muted">{{ d["created_at"] }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contract_documents.view_document', contract_id=contract['id'], doc_id=d['id']) }}"
-                  >View</a
-                >
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contract_documents.view_document', contract_id=contract['id'], doc_id=d['id']) }}">View</a>
                 {% if session.get('role') == 'admin' %}
                   <form
                     method="post"

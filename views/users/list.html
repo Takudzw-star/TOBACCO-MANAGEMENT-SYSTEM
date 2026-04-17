@@ -35,14 +35,8 @@
               </td>
               <td class="text-muted">{{ u["created_at"] }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('users.edit_user', user_id=u['id']) }}"
-                  >Edit</a
-                >
-                <a
-                  class="btn btn-sm btn-outline-secondary"
-                  href="{{ url_for('users.reset_password', user_id=u['id']) }}"
-                  >Reset password</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('users.edit_user', user_id=u['id']) }}">Edit</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('users.reset_password', user_id=u['id']) }}">Reset password</a>
               </td>
             </tr>
           {% else %}

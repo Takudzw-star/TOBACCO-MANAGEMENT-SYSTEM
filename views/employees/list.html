@@ -29,9 +29,7 @@
               <td class="text-end">{% if e["salary"] is not none %}{{ "%.2f"|format(e["salary"]) }}{% endif %}</td>
               <td>{{ e["hire_date"] or "" }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('employees.edit_employee', employee_id=e['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('employees.edit_employee', employee_id=e['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('employees.delete_employee', employee_id=e['id']) }}"

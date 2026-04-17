@@ -36,16 +36,8 @@
               <td>{{ c["contract_date"] or "" }}</td>
               <td class="text-truncate" style="max-width: 420px">{{ c["details"] or "" }}</td>
               <td class="text-end">
-                <a
-                  class="btn btn-sm btn-outline-primary"
-                  href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}"
-                  >View</a
-                >
-                <a
-                  class="btn btn-sm btn-outline-secondary"
-                  href="{{ url_for('contracts.edit_contract', contract_id=c['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contracts.contract_detail', contract_id=c['id']) }}">View</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contracts.edit_contract', contract_id=c['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('contracts.delete_contract', contract_id=c['id']) }}"

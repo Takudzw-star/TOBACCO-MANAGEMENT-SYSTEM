@@ -51,9 +51,7 @@
               </td>
               <td class="text-truncate" style="max-width: 420px">{{ v["purpose"] or "" }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('officer_visits.edit_visit', visit_id=v['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('officer_visits.edit_visit', visit_id=v['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('officer_visits.delete_visit', visit_id=v['id']) }}"

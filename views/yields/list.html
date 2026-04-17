@@ -35,9 +35,7 @@
               <td class="text-end">{{ "%.2f"|format(y["weight_kg"] or 0) }}</td>
               <td>{{ y["delivery_date"] }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('yields.edit_yield', yield_id=y['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('yields.edit_yield', yield_id=y['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('yields.delete_yield', yield_id=y['id']) }}"

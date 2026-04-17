@@ -157,9 +157,7 @@
               <td class="text-end">{{ "%.2f"|format(c["total_paid"] or 0) }}</td>
               <td>{{ c["last_payment_date"] or "—" }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contracts.contract_detail', contract_id=c['contract_id']) }}"
-                  >View</a
-                >
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contracts.contract_detail', contract_id=c['contract_id']) }}">View</a>
               </td>
             </tr>
           {% else %}

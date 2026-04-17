@@ -39,12 +39,8 @@
                 {% endif %}
               </td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('farmers.farmer_detail', farmer_id=f['id']) }}"
-                  >View</a
-                >
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('farmers.edit_farmer', farmer_id=f['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('farmers.farmer_detail', farmer_id=f['id']) }}">View</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('farmers.edit_farmer', farmer_id=f['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('farmers.delete_farmer', farmer_id=f['id']) }}"

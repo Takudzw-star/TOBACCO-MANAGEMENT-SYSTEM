@@ -25,9 +25,7 @@
               <td class="fw-semibold">{{ t["name"] }}</td>
               <td class="text-muted">{{ t["created_at"] }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_templates.edit_template', template_id=t['id']) }}"
-                  >Edit</a
-                >
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contract_templates.edit_template', template_id=t['id']) }}">Edit</a>
                 <form
                   method="post"
                   action="{{ url_for('contract_templates.delete_template', template_id=t['id']) }}"
