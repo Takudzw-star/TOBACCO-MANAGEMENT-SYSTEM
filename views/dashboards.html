@@ -2,18 +2,13 @@
 {% block title %}Dashboards · TMS{% endblock %}
 
 {% block content %}
-  <div class="dashboard-banner mb-4">
-    <div class="dashboard-banner-overlay"></div>
-    <div class="dashboard-banner-content">
-      <div class="d-flex justify-content-between align-items-end">
-        <div>
-          <h1 class="h2 mb-1 fw-bold text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Tobacco field operations</h1>
-          <div class="text-white fw-medium" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Key stats, charts, alerts, and quick actions for your season.</div>
-        </div>
-        <div class="d-flex gap-2">
-          <a class="btn btn-light shadow-sm" href="{{ url_for('reminders.reminders_home') }}">Alerts</a>
-        </div>
-      </div>
+  <div class="mb-4 d-flex justify-content-between align-items-end">
+    <div>
+      <h1 class="h3 mb-1 fw-bold text-white">System Overview</h1>
+      <div class="text-muted small">Monitor system health and activity.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-primary shadow-sm" href="{{ url_for('reminders.reminders_home') }}" style="border: none;">Alerts</a>
     </div>
   </div>
 
@@ -342,25 +337,19 @@
   </script>
 
   <style>
-    /* Fascinating Dark/Glassmorphism Dashboard Adjustments */
-    .dashboard-banner {
-      border-radius: 1rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      margin-bottom: 2rem !important;
-    }
+    /* Dark Dashboard Cards Adjustments */
     .card {
-      background: linear-gradient(145deg, #132017, #0c1410) !important;
-      border: 1px solid rgba(45, 122, 62, 0.3) !important;
+      background: linear-gradient(145deg, var(--card-bg), var(--bg-dark)) !important;
+      border: 1px solid var(--border-color) !important;
       border-radius: 1rem !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
       color: #f8fafc !important;
-      backdrop-filter: blur(8px);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.3) !important;
-      border-color: rgba(45, 122, 62, 0.6) !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
+      border-color: rgba(34, 197, 94, 0.4) !important;
     }
     .card-body, .list-group-item {
       background-color: transparent !important;
@@ -411,8 +400,8 @@
     .form-select:focus, .form-control:focus {
       background-color: rgba(0,0,0,0.3);
       color: #f8fafc;
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 0 .25rem rgba(45,122,62,.25);
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 .25rem rgba(34,197,94,.25);
     }
     .text-muted {
       color: #94a3b8 !important;

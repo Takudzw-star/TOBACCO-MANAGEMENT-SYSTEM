@@ -3,11 +3,18 @@
 {% block body_class %}login-bg{% endblock %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5 mt-5">
-      <div class="card login-card border-0">
-        <div class="card-body">
-          <h1 class="h4 mb-3">Login</h1>
+  <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5 col-xl-4 mt-4">
+      <div class="card login-card border-0 py-4 px-3 px-md-4" style="background-color: var(--sidebar-bg); max-width: 440px; margin: 0 auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        <div class="card-body p-0">
+          <div class="text-center mb-4">
+            <img src="{{ url_for('static', filename=branding.logo or 'images/tobacco-leaf.svg') }}" 
+                 class="mb-3 rounded text-primary" 
+                 style="width: 48px; height: 48px; object-fit: contain; padding: 6px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);" 
+                 alt="Logo">
+            <h1 class="h4 fw-bold mb-1 text-white">Welcome Back</h1>
+            <p class="text-muted small">Sign in to your TMS account</p>
+          </div>
 
           <form method="post">
             <input type="hidden" name="next_url" value="{{ next_url }}" />
@@ -20,65 +27,107 @@
               {% endif %}
             {% endfor %}
 
-            <div class="mb-3">
-              <label class="form-label">Login as role</label>
-              <select class="form-select" id="roleSelect">
-                <option value="" selected>— Select role (optional) —</option>
-                {% for r in roles %}
-                  <option value="{{ r }}">{{ r }}</option>
+            <!-- Custom Role Pill Tabs -->
+            <div class="d-flex p-1 rounded-3 mb-4 flex-wrap gap-1" style="background-color: #0b1120; border: 1px solid var(--border-color);">
+                {% set target_roles = ['field_officer', 'accountant', 'manager', 'hr', 'admin'] %}
+                {% for tr in target_roles %}
+                  <button type="button" class="btn btn-sm flex-fill role-tab text-muted fw-medium py-2 rounded-2 view-tab" data-role="{{ tr }}" style="font-size: 0.8rem; border: none;">
+                    {% if tr == 'field_officer' %}Officer
+                    {% elif tr == 'accountant' %}Accountant
+                    {% elif tr == 'manager' %}Manager
+                    {% elif tr == 'hr' %}HR
+                    {% else %}Admin{% endif %}
+                  </button>
                 {% endfor %}
-              </select>
-              <div class="form-text">Optional: pick a role, then choose a user account for that role.</div>
+            </div>
+            
+            <input type="hidden" id="roleSelect" value="{{ request.args.get('role', '') }}" />
+
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold mb-1">Select User (Optional)</label>
+              <div class="input-group">
+                <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-dark); border-color: var(--border-color);"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg></span>
+                <select class="form-select border-start-0 ps-0" name="user_id" id="userSelect" style="background-color: var(--bg-dark); border-color: var(--border-color); box-shadow: none;">
+                  <option value="" selected>— None selected —</option>
+                  {% for u in choices %}
+                    <option value="{{ u.id }}" data-role="{{ u.role }}">{{ u.username }} ({{ u.role }})</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label">User</label>
-              <select class="form-select" name="user_id" id="userSelect">
-                <option value="" selected>— Select user (optional) —</option>
-                {% for u in choices %}
-                  <option value="{{ u.id }}" data-role="{{ u.role }}">{{ u.username }} ({{ u.role }})</option>
-                {% endfor %}
-              </select>
-              <div class="form-text">If you don’t select a user, you can type a username manually below.</div>
+              <label class="form-label text-muted small fw-semibold mb-1">Username</label>
+              <div class="input-group">
+                <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-dark); border-color: var(--border-color);"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/></svg></span>
+                <input class="form-control border-start-0 ps-0" name="username" autocomplete="username" placeholder="e.g. admin" style="background-color: var(--bg-dark); border-color: var(--border-color); box-shadow: none;" />
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Username</label>
-              <input class="form-control" name="username" autocomplete="username" placeholder="Type username…" />
+            <div class="mb-4">
+              <label class="form-label text-muted small fw-semibold mb-1">Password</label>
+              <div class="input-group">
+                <span class="input-group-text border-end-0 text-muted" style="background-color: var(--bg-dark); border-color: var(--border-color);"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg></span>
+                <input class="form-control border-start-0 ps-0" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required style="background-color: var(--bg-dark); border-color: var(--border-color); box-shadow: none;" />
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input class="form-control" type="password" name="password" autocomplete="current-password" required />
-            </div>
-
-            <button class="btn btn-primary w-100" type="submit">Sign in</button>
-
-            <div class="text-muted small mt-3">
-              Contact your administrator for your username and password.
+            <button class="btn btn-primary w-100 py-2 fw-medium mb-3" type="submit" style="background-color: var(--primary-green); border: none; border-radius: 8px;">
+              Sign In <span class="ms-1">→</span>
+            </button>
+            <div class="d-flex justify-content-between align-items-center text-muted small">
+              <label class="d-flex align-items-center"><input type="checkbox" class="form-check-input mt-0 me-2" style="background-color: transparent; border-color: var(--border-color);"> Remember me</label>
+              <a href="#" class="text-decoration-none" style="color: var(--primary-green);">Forgot password?</a>
             </div>
           </form>
 
           <script>
             (function () {
-              const roleSelect = document.getElementById('roleSelect');
+              const roleInput = document.getElementById('roleSelect');
               const userSelect = document.getElementById('userSelect');
+              const tabs = document.querySelectorAll('.role-tab');
 
               function applyRoleFilter(role) {
+                // Update tabs ui
+                tabs.forEach(t => {
+                  if (t.dataset.role === role) {
+                    t.style.backgroundColor = 'var(--primary-green)';
+                    t.style.color = '#fff';
+                    t.classList.remove('text-muted');
+                  } else {
+                    t.style.backgroundColor = 'transparent';
+                    t.style.color = '';
+                    t.classList.add('text-muted');
+                  }
+                });
+
+                // Update select options
                 const opts = Array.from(userSelect.options);
                 opts.forEach((o) => {
-                  if (!o.value) return;
+                  if (!o.value) return; // keep 'none selected' visible
                   const r = o.getAttribute('data-role') || '';
                   o.hidden = !!role && r !== role;
                 });
-                // reset selection if hidden
                 if (userSelect.selectedOptions.length && userSelect.selectedOptions[0].hidden) {
                   userSelect.value = '';
                 }
               }
 
-              roleSelect?.addEventListener('change', () => applyRoleFilter(roleSelect.value));
-              applyRoleFilter(roleSelect?.value || '');
+              tabs.forEach(t => {
+                t.addEventListener('click', (e) => {
+                  const r = e.target.dataset.role;
+                  // toggle off if already selected
+                  if(roleInput.value === r) {
+                    roleInput.value = '';
+                  } else {
+                    roleInput.value = r;
+                  }
+                  applyRoleFilter(roleInput.value);
+                });
+              });
+
+              // Initial flush
+              applyRoleFilter(roleInput.value || '');
             })();
           </script>
         </div>
