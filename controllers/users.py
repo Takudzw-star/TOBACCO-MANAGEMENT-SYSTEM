@@ -58,7 +58,7 @@ def create_user():
                 conn.execute(
                     """
                     INSERT INTO users (username, password_hash, role, is_active, must_change_password)
-                    VALUES (?, ?, ?, ?, 1)
+                    VALUES (?, ?, ?, ?, 0)
                     """,
                     (username, password_hash, role, is_active),
                 )
@@ -143,7 +143,7 @@ def reset_password(user_id: int):
 
         with get_connection() as conn:
             conn.execute(
-                "UPDATE users SET password_hash = ?, must_change_password = 1 WHERE id = ?",
+                "UPDATE users SET password_hash = ?, must_change_password = 0 WHERE id = ?",
                 (generate_password_hash(password), user_id),
             )
             conn.commit()

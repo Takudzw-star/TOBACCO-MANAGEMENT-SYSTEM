@@ -231,7 +231,7 @@ def _ensure_default_users(cursor):
             cursor.execute(
                 """
                 INSERT INTO users (username, password_hash, role, is_active, must_change_password)
-                VALUES (?, ?, ?, 1, 1)
+                VALUES (?, ?, ?, 1, 0)
                 """,
                 (role, default_pw, role),
             )
