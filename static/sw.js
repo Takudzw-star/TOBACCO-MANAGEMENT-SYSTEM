@@ -1,5 +1,5 @@
 /* Minimal service worker: cache app shell for basic offline use. */
-const CACHE = 'tms-cache-v1';
+const CACHE = 'tms-cache-v2';
 const ASSETS = [
   '/',
   '/dashboards',
