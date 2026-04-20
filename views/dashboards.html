@@ -411,5 +411,15 @@
     canvas {
       filter: invert(0.9) hue-rotate(180deg) brightness(1.1);
     }
+
+    /* Dashboard Background Image with Dark Overlay */
+    body {
+      background-color: var(--bg-dark) !important;
+      background-image: linear-gradient(rgba(11, 17, 32, 0.85), rgba(11, 17, 32, 0.95)), url('/static/images/dashboard-bg.jpg') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      background-repeat: no-repeat !important;
+    }
   </style>
 {% endblock %}
