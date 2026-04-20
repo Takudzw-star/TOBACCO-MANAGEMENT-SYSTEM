@@ -41,11 +41,28 @@ def create_app():
     app = Flask(__name__, template_folder="views", static_folder="static")
     secret = os.environ.get("FLASK_SECRET_KEY")
     is_prod = os.environ.get("FLASK_DEBUG", "0") != "1"
+    
     if not secret:
         if is_prod:
-            raise RuntimeError("CRITICAL: FLASK_SECRET_KEY must be set in production mode. Refusing to start.")
-        secret = "dev_secret_key_change_me"
-        print("WARNING: FLASK_SECRET_KEY is not set. Using a development fallback secret.")
+            # Fallback to generating a key and saving it on the persistent disk
+            secret_file = "/var/data/.secret_key"
+            try:
+                if os.path.exists(secret_file):
+                    with open(secret_file, "r") as f:
+                        secret = f.read().strip()
+                else:
+                    import secrets
+                    secret = secrets.token_hex(32)
+                    with open(secret_file, "w") as f:
+                        f.write(secret)
+            except Exception as e:
+                print(f"WARNING: Persisting secret key failed: {e}")
+                
+            if not secret:
+                raise RuntimeError("CRITICAL: FLASK_SECRET_KEY must be set in production mode. Refusing to start.")
+        else:
+            secret = "dev_secret_key_change_me"
+            print("WARNING: FLASK_SECRET_KEY is not set. Using a development fallback secret.")
     app.secret_key = secret
 
     from database.setup_db import initialize_database
