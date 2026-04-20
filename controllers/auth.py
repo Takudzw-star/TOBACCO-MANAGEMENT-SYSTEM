@@ -67,7 +67,7 @@ def roles_required(*roles):
             role = session.get("role")
             if not role_in(role, roles):
                 flash("You do not have permission to access this page.", "danger")
-                return redirect(url_for("dashboards"))
+                return redirect(url_for("main_dashboard.dashboards"))
             return view(*args, **kwargs)
 
         return wrapped
@@ -77,7 +77,7 @@ def roles_required(*roles):
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
-    next_url = request.args.get("next") or url_for("dashboards")
+    next_url = request.args.get("next") or url_for("main_dashboard.dashboards")
     if request.method == "POST":
         user_id_raw = (request.form.get("user_id") or "").strip()
         username = (request.form.get("username") or "").strip()
@@ -197,7 +197,7 @@ def change_password():
             conn.commit()
 
         flash("Password changed.", "success")
-        next_url = session.pop("post_change_next", None) or url_for("dashboards")
+        next_url = session.pop("post_change_next", None) or url_for("main_dashboard.dashboards")
         return redirect(next_url)
 
     return render_template("auth/change_password.html", password_rules=PASSWORD_RULES)

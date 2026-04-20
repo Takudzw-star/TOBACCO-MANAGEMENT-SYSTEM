@@ -11,7 +11,7 @@
         </p>
         <div class="d-flex gap-2 flex-wrap">
           {% if session.get('user_id') %}
-            <a class="btn btn-primary" href="{{ url_for('dashboards') }}">Go to dashboard</a>
+            <a class="btn btn-primary" href="{{ url_for('main_dashboard.dashboards') }}">Go to dashboard</a>
           {% else %}
             <a class="btn btn-primary" href="{{ url_for('home') }}">Go to home</a>
           {% endif %}

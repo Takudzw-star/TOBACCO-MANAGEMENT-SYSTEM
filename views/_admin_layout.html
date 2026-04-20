@@ -209,7 +209,7 @@
       </div>
       
       <div class="nav-links">
-        <a href="{{ url_for('dashboards') }}" class="nav-item {% if request.path == '/' or request.path.startswith('/dashboards') %}active{% endif %}">
+        <a href="{{ url_for('main_dashboard.dashboards') }}" class="nav-item {% if request.path == '/' or request.path.startswith('/dashboards') %}active{% endif %}">
           <i class="bi bi-activity"></i> System Overview
         </a>
 
