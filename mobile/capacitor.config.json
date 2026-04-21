@@ -1,0 +1,10 @@
+{
+  "appId": "com.attenpro.tms",
+  "appName": "Tobacco Management",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://tobacco-management-system.onrender.com",
+    "cleartext": true
+  }
+}
